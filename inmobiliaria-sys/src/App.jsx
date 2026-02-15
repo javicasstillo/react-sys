@@ -1,33 +1,18 @@
-import { Routes, Route, Link } from "react-router-dom";
+import { Routes, Route, Link, useNavigate } from "react-router-dom";
 import { useEffect } from "react";
 import AOS from "aos";
-import "aos/dist/aos.css";
-
-import Login from "./pages/Login";
-import Admin from "./pages/Admin";
+import { Admin } from "./pages/Admin";
 
 function Home() {
   useEffect(() => {
-    AOS.init();
-
-    // Cerrar el navbar en mobile
-    const links = document.querySelectorAll(".navbar-nav .nav-link");
-    links.forEach((link) => {
-      link.addEventListener("click", () => {
-        const navbarCollapse = document.getElementById("navbarNav");
-        if (window.bootstrap) {
-          const bsCollapse = window.bootstrap.Collapse.getInstance(navbarCollapse);
-          if (bsCollapse) bsCollapse.hide();
-        }
-      });
-    });
+    AOS.init({ once: true });
   }, []);
 
   return (
     <>
       {/* HEADER */}
       <header>
-        <nav className="navbar navbar-expand-lg bg-rosa fixed-top" data-bs-theme="dark">
+        <nav className="navbar navbar-expand-lg bg-rosa fixed-top">
           <div className="container">
             <a className="navbar-brand" href="#banner">
               <img src="/assets/logo.png" alt="logo" className="logo" />
@@ -44,12 +29,25 @@ function Home() {
 
             <div className="collapse navbar-collapse" id="navbarNav">
               <ul className="navbar-nav ms-auto">
-                <li className="nav-item"><a className="nav-link active" href="#banner">Inicio</a></li>
-                <li className="nav-item"><a className="nav-link" href="#menu-propiedades">Propiedades</a></li>
-                <li className="nav-item"><a className="nav-link" href="#servicios">Servicios</a></li>
-                <li className="nav-item"><a className="nav-link" href="#nosotros">Nosotros</a></li>
                 <li className="nav-item">
-                  <Link className="nav-link text-dark" to="/login">Iniciar Sesión</Link>
+                  <a className="nav-link text-white" href="#banner">
+                    Inicio
+                  </a>
+                </li>
+                <li className="nav-item">
+                  <a className="nav-link text-white" href="#nosotros">
+                    Nosotros
+                  </a>
+                </li>
+                <li className="nav-item">
+                  <a className="nav-link text-white" href="#propiedades">
+                    Propiedades
+                  </a>
+                </li>
+                <li className="nav-item">
+                  <Link className="nav-link text-rosa" to="/login">
+                    Iniciar sesión
+                  </Link>
                 </li>
               </ul>
             </div>
@@ -58,7 +56,7 @@ function Home() {
       </header>
 
       {/* MAIN */}
-<main>
+    <main>
         {/* BANNER */}
         <section id="banner" className="portada d-flex align-items-center">
           <div className="container py-5">
@@ -189,7 +187,7 @@ function Home() {
 
             <div className="row justify-content-center align-items-center">
               <div className="col-12 col-md-6" data-aos="fade-up">
-                <img src="/assets/oficina.jpg" alt="imagen" className="w-100" />
+                <img src="/assets/oficina" alt="imagen" className="w-100" />
               </div>
 
               <div className="col-12 col-md-6 py-3" data-aos="fade-up">
@@ -322,7 +320,52 @@ function Home() {
   );
 }
 
-function App() {
+function Login() {
+  const navigate = useNavigate();
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    navigate("/admin");
+  };
+
+  return (
+    <main>
+      <section id="login" className="portada2 d-flex align-items-center">
+        <div className="container">
+          <div className="row justify-content-center">
+            <div className="col-12 col-md-6">
+              <div className="card bg-black bg-opacity-50 p-4">
+                <div className="d-flex flex-column align-items-center">
+                  <img src="/assets/logo.png" className="w-25 mb-3" />
+
+                  <form onSubmit={handleSubmit} className="w-100">
+                    <div className="mb-3">
+                      <label className="form-label text-rosa">Usuario</label>
+                      <input type="email" className="form-control" />
+                    </div>
+
+                    <div className="mb-3">
+                      <label className="form-label text-rosa">Contraseña</label>
+                      <input type="password" className="form-control" />
+                    </div>
+
+                    <div className="d-flex justify-content-end">
+                      <button className="btn bg-rosa text-white">
+                        Ingresar
+                      </button>
+                    </div>
+                  </form>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+  );
+}
+
+export default function App() {
   return (
     <Routes>
       <Route path="/" element={<Home />} />
@@ -331,5 +374,3 @@ function App() {
     </Routes>
   );
 }
-
-export default App;

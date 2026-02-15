@@ -84,7 +84,6 @@ body {
 ======================= */
 
 .portada {
-    margin-top: 10px;
     min-height: 100vh ;
     background-image:
         linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)),
@@ -95,7 +94,7 @@ body {
 }
 
 .portada2{
-    min-height: 100vh ;
+    min-height: 180vh ;
     background-image:
         linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)),
         url("/assets/portada.jpg");

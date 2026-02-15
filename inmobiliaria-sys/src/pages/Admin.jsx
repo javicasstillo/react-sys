@@ -1,65 +1,101 @@
-import { useEffect, useState } from "react"
-import { collection, addDoc, getDocs, deleteDoc, doc } from "firebase/firestore"
-import { ref, uploadBytes, getDownloadURL } from "firebase/storage"
-import { db, storage } from "../firebase"
+import { useEffect, useState } from "react";
+import { db } from "../firebase";
+import { collection, addDoc, getDocs, deleteDoc, doc } from "firebase/firestore";
+import { Link } from "react-router-dom";
 
-export default function Admin() {
-  const [props, setProps] = useState([])
-  const [titulo, setTitulo] = useState("")
-  const [file, setFile] = useState(null)
+export function Admin() {
+  const [propiedades, setPropiedades] = useState([]);
+  const [titulo, setTitulo] = useState("");
+  const [precio, setPrecio] = useState("");
+  const [imagen, setImagen] = useState("");
 
-  const cargar = async () => {
-    const snap = await getDocs(collection(db, "propiedades"))
-    setProps(snap.docs.map(d => ({ id: d.id, ...d.data() })))
-  }
+  const propiedadesRef = collection(db, "propiedades");
 
-  useEffect(() => { cargar() }, [])
+  const obtenerPropiedades = async () => {
+    const data = await getDocs(propiedadesRef);
+    setPropiedades(data.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
+  };
 
-  const crear = async () => {
-    const imgRef = ref(storage, `propiedades/${file.name}`)
-    await uploadBytes(imgRef, file)
-    const url = await getDownloadURL(imgRef)
+  useEffect(() => {
+    obtenerPropiedades();
+  }, []);
 
-    await addDoc(collection(db, "propiedades"), {
+  const crearPropiedad = async (e) => {
+    e.preventDefault();
+    await addDoc(propiedadesRef, {
       titulo,
-      imagen: url,
-      createdAt: Date.now()
-    })
+      precio,
+      imagen,
+    });
+    setTitulo("");
+    setPrecio("");
+    setImagen("");
+    obtenerPropiedades();
+  };
 
-    setTitulo("")
-    setFile(null)
-    cargar()
-  }
-
-  const borrar = async (id, img) => {
-    await deleteDoc(doc(db, "propiedades", id))
-    setProps(props.filter(p => p.id !== id))
-  }
+  const borrarPropiedad = async (id) => {
+    const propDoc = doc(db, "propiedades", id);
+    await deleteDoc(propDoc);
+    obtenerPropiedades();
+  };
 
   return (
-    <div className="container py-4">
-      <h1>Panel de Administración</h1>
-      <p>Bienvenido al panel privado de Inmobiliaria SyS.</p>
+    <div className="container py-5">
+      <h1 className="text-bebas">Panel de Administración</h1>
 
-      <div className="card p-3 mb-4">
-        <input className="form-control my-2" placeholder="Título" value={titulo} onChange={e => setTitulo(e.target.value)} />
-        <input className="form-control my-2" type="file" onChange={e => setFile(e.target.files[0])} />
-        <button onClick={crear} className="btn btn-success">Agregar</button>
-      </div>
+      <form onSubmit={crearPropiedad} className="mb-4">
+        <input
+          type="text"
+          placeholder="Título"
+          className="form-control mb-2"
+          value={titulo}
+          onChange={(e) => setTitulo(e.target.value)}
+          required
+        />
+        <input
+          type="text"
+          placeholder="Precio"
+          className="form-control mb-2"
+          value={precio}
+          onChange={(e) => setPrecio(e.target.value)}
+          required
+        />
+        <input
+          type="text"
+          placeholder="URL de imagen"
+          className="form-control mb-2"
+          value={imagen}
+          onChange={(e) => setImagen(e.target.value)}
+          required
+        />
+        <button className="btn bg-rosa text-white">
+          Agregar propiedad
+        </button>
+      </form>
 
       <div className="row">
-        {props.map(p => (
-          <div key={p.id} className="col-md-4">
-            <div className="card mb-3">
-              <img src={p.imagen} className="card-img-top" />
+        {propiedades.map((prop) => (
+          <div key={prop.id} className="col-12 col-md-4 mb-3">
+            <div className="card">
+              <img src={prop.imagen} className="card-img-top" />
               <div className="card-body">
-                <h5>{p.titulo}</h5>
-                <button onClick={() => borrar(p.id)} className="btn btn-danger">Eliminar</button>
+                <h5>{prop.titulo}</h5>
+                <p>${prop.precio}</p>
+                <button
+                  onClick={() => borrarPropiedad(prop.id)}
+                  className="btn btn-danger btn-sm"
+                >
+                  Eliminar
+                </button>
               </div>
             </div>
           </div>
         ))}
       </div>
+
+      <Link to="/" className="btn btn-secondary mt-4">
+        Volver al sitio
+      </Link>
     </div>
-  )
+  );
 }
