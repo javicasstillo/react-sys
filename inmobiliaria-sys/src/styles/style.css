@@ -1,0 +1,229 @@
+html,
+body {
+  overflow-x: hidden;
+  width: 100%;
+}
+
+body {
+  padding-top: 80px;
+}
+
+@font-face {
+    font-family: "bungee";
+    src: url(/fonts/Bungee-Regular.ttf);
+}
+
+@font-face {
+    font-family: "bebas";
+    src: url(/fonts/BebasNeue-Regular.ttf);
+}
+
+@font-face {
+    font-family: "Roboto";
+    src: url(/fonts/Roboto-VariableFont_wdth\,wght.ttf);
+}
+
+/* =======================
+   TIPOGRAFÍAS
+======================= */
+
+.text-bungee {
+    font-family: "bungee";
+}
+
+.text-bebas {
+    font-family: "bebas";
+}
+
+.text-roboto {
+    font-family: "roboto";
+}
+
+/* =======================
+   COLORES Y TAMAÑOS
+======================= */
+
+.text-rosa {
+    color: #DA9FA7;
+}
+
+.bg-rosa{
+    background-color: #DA9FA7 !important;
+}
+
+.bg-verde{
+    background-color: #25D366 !important;
+}
+
+.tamano {
+    font-size: 5rem;
+}
+
+.tamano2 {
+    font-size: 3rem;
+}
+
+.logo {
+  width: 120px;   /* tamaño fijo */
+  max-width: 100%;
+}
+
+.navbar-brand {
+  display: flex;
+  align-items: center;
+}
+
+.navbar .container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+/* =======================
+   PORTADA PRINCIPAL
+======================= */
+
+.portada {
+    margin-top: 10px;
+    min-height: 100vh ;
+    background-image:
+        linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)),
+        url("/assets/portada.jpg");
+    background-position: center;
+    background-size: cover;
+    z-index: 1;
+}
+
+.portada2{
+    min-height: 100vh ;
+    background-image:
+        linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)),
+        url("/assets/portada.jpg");
+    background-position: center;
+    background-size: cover;
+}
+
+/* =======================
+   SECCIÓN PROPIEDADES
+======================= */
+
+#menu-propiedades {
+    min-height: 120vh;
+}
+
+/* La card no deja que el zoom se salga */
+.card {
+    overflow: hidden;
+}
+
+.mini-portada-casas,
+.mini-portada-departamentos,
+.mini-portada-locales,
+.mini-portada-lotes,
+.mini-portada-fincas {
+    height: 50vh;
+    background-position: center;
+    background-size: cover;
+    cursor: pointer;
+    transition: transform 0.4s ease;
+}
+
+
+.mini-portada-casas {
+    background-image:
+        linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)),
+        url("/assets/Casas.jpg");
+}
+
+.mini-portada-departamentos {
+    background-image:
+        linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)),
+        url("/assets/Departamentos.jpg");
+}
+
+.mini-portada-locales {
+    background-image:
+        linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)),
+        url("/assets/Locales.jpg");
+}
+
+.mini-portada-lotes {
+    background-image:
+        linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)),
+        url("/assets/Lotes.jpg");
+}
+
+.mini-portada-fincas {
+    background-image:
+        linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)),
+        url("/assets/Fincas.jpg");
+}
+
+
+.mini-portada-casas:hover,
+.mini-portada-departamentos:hover,
+.mini-portada-locales:hover,
+.mini-portada-lotes:hover,
+.mini-portada-fincas:hover {
+    transform: scale(1.05);
+}
+
+
+.mini-portada-casas p,
+.mini-portada-departamentos p,
+.mini-portada-locales p,
+.mini-portada-lotes p,
+.mini-portada-fincas p {
+    transition: transform 0.4s ease;
+}
+
+.mini-portada-casas:hover p,
+.mini-portada-departamentos:hover p,
+.mini-portada-locales:hover p,
+.mini-portada-lotes:hover p,
+.mini-portada-fincas:hover p {
+    transform: scale(1.1);
+}
+
+/* =======================
+   SECCIÓN SERVICIOS
+======================= */
+
+#servicios{
+    min-height: 100vh;
+}
+
+.altura{
+    height: 200px;
+}
+
+#servicios .card {
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  cursor: pointer;
+}
+
+#servicios .card:hover {
+  transform: scale(1.05);
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.25);
+}
+
+
+@media screen and (max-width: 767px) {
+    .centrado{
+        margin: auto; 
+    }   
+}
+
+
+/* =======================
+   SECCIÓN NOSOTROS
+======================= */
+
+#nosotros{
+    min-height: 120vh;
+}
+
+
+#login{
+    min-height: 100vh;
+}
