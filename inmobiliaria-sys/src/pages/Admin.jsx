@@ -17,6 +17,7 @@ export default function Admin() {
   const [precio, setPrecio] = useState("");
   const [imagen, setImagen] = useState("");
   const [tipo, setTipo] = useState("");
+  const [mensaje, setMensaje] = useState(""); // <-- estado para el mensaje de confirmación
 
   const propiedadesRef = collection(db, "propiedades");
 
@@ -33,16 +34,26 @@ export default function Admin() {
 
   const crearPropiedad = async (e) => {
     e.preventDefault();
-    await addDoc(propiedadesRef, {
-      titulo,
-      precio,
-      imagen,
-      tipo,
-    });
-    setTitulo("");
-    setPrecio("");
-    setImagen("");
-    obtenerPropiedades();
+    try {
+      await addDoc(propiedadesRef, {
+        titulo,
+        precio,
+        imagen,
+        tipo,
+      });
+      setTitulo("");
+      setPrecio("");
+      setImagen("");
+      setMensaje("✅ Propiedad agregada con éxito!"); // <-- mensaje exitoso
+      obtenerPropiedades();
+
+      // Desaparece el mensaje después de 3 segundos
+      setTimeout(() => setMensaje(""), 3000);
+    } catch (error) {
+      console.error(error);
+      setMensaje("❌ Error al agregar la propiedad");
+      setTimeout(() => setMensaje(""), 3000);
+    }
   };
 
   const borrarPropiedad = async (id) => {
@@ -84,13 +95,15 @@ export default function Admin() {
           <div className="d-flex justify-content-between align-items-center mb-4">
             <h2>Administrando: {tipo.toUpperCase()}</h2>
 
-            <button
-              className="btn btn-secondary"
-              onClick={() => setTipo("")}
-            >
+            <button className="btn btn-secondary" onClick={() => setTipo("")}>
               Cambiar tipo
             </button>
           </div>
+
+          {/* MENSAJE DE CONFIRMACIÓN */}
+          {mensaje && (
+            <div className="alert alert-success text-center">{mensaje}</div>
+          )}
 
           <form onSubmit={crearPropiedad} className="mb-4">
             <input

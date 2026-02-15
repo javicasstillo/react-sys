@@ -4,30 +4,28 @@ import { collection, getDocs, query, where } from "firebase/firestore";
 
 export default function Casas() {
   const [casas, setCasas] = useState([]);
+  const propiedadesRef = collection(db, "propiedades");
 
   useEffect(() => {
     const fetchCasas = async () => {
-      const ref = collection(db, "propiedades");
-      const q = query(ref, where("tipo", "==", "casa"));
+      const q = query(propiedadesRef, where("tipo", "==", "casa"));
       const data = await getDocs(q);
-      setCasas(data.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
+      setCasas(data.docs.map(d => ({ id: d.id, ...d.data() })));
     };
-
     fetchCasas();
   }, []);
 
   return (
     <div className="container py-5">
       <h1>Casas</h1>
-
       <div className="row">
-        {casas.map((casa) => (
-          <div key={casa.id} className="col-md-4 mb-4">
+        {casas.map(c => (
+          <div key={c.id} className="col-12 col-md-4 mb-3">
             <div className="card">
-              <img src={casa.imagen} className="card-img-top" />
+              <img src={c.imagen} className="card-img-top" alt={c.titulo} />
               <div className="card-body">
-                <h5>{casa.titulo}</h5>
-                <p>${casa.precio}</p>
+                <h5>{c.titulo}</h5>
+                <p>${c.precio}</p>
               </div>
             </div>
           </div>
