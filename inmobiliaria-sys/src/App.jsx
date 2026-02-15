@@ -1,7 +1,12 @@
 import { Routes, Route, Link, useNavigate } from "react-router-dom";
 import { useEffect } from "react";
 import AOS from "aos";
-import { Admin } from "./pages/Admin";
+import Admin from "./pages/Admin"; // ✅ Correcto
+import Casas from "./pages/Casas";
+import Departamentos from "./pages/Departamentos";
+import Fincas from "./pages/Fincas";
+import Lotes from "./pages/Lotes";
+import Locales from "./pages/Locales";
 
 function Home() {
   useEffect(() => {
@@ -133,15 +138,28 @@ function Home() {
         {/* PROPIEDADES */}
         <section id="menu-propiedades" className="d-flex align-items-center">
           <div className="container py-3">
-            <h3 className="text-bebas text-center tamano2" data-aos="fade-up">Propiedades</h3>
+            <h3 className="text-bebas text-center tamano2" data-aos="fade-up">
+              Propiedades
+            </h3>
+
             <div className="row justify-content-center gy-3">
-              {["Casas","Departamentos","Locales","Lotes","Fincas"].map((item, i) => (
+              {[
+                { nombre: "Casas", ruta: "/casas" },
+                { nombre: "Departamentos", ruta: "/departamentos" },
+                { nombre: "Locales", ruta: "/locales" },
+                { nombre: "Lotes", ruta: "/lotes" },
+                { nombre: "Fincas", ruta: "/fincas" },
+              ].map((item, i) => (
                 <div key={i} className="col-12 col-md-6 col-lg-4" data-aos="fade-up">
-                  <div className="card h-100">
-                    <div className={`mini-portada-${item.toLowerCase()} d-flex align-items-end justify-content-center`}>
-                      <p className="text-bebas text-white tamano2">{item}</p>
+                  <Link to={item.ruta} className="text-decoration-none">
+                    <div className="card h-100">
+                      <div className={`mini-portada-${item.nombre.toLowerCase()} d-flex align-items-end justify-content-center`}>
+                        <p className="text-bebas text-white tamano2">
+                          {item.nombre}
+                        </p>
+                      </div>
                     </div>
-                  </div>
+                  </Link>
                 </div>
               ))}
             </div>
@@ -371,6 +389,12 @@ export default function App() {
       <Route path="/" element={<Home />} />
       <Route path="/login" element={<Login />} />
       <Route path="/admin" element={<Admin />} />
+      <Route path="/casas" element={<Casas />} />
+      <Route path="/departamentos" element={<Departamentos />} />
+      <Route path="/locales" element={<Locales />} />
+      <Route path="/lotes" element={<Lotes />} />
+      <Route path="/fincas" element={<Fincas />} />
     </Routes>
+
   );
 }
