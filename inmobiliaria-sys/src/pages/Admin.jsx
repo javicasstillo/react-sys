@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { db } from "../firebase";
+import { db, storage } from "../firebase";
 import {
   collection,
   addDoc,
@@ -9,158 +9,204 @@ import {
   query,
   where,
 } from "firebase/firestore";
-import { Link } from "react-router-dom";
+import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 
 export default function Admin() {
-  const [propiedades, setPropiedades] = useState([]);
+  const [tipo, setTipo] = useState("");
   const [titulo, setTitulo] = useState("");
   const [precio, setPrecio] = useState("");
-  const [imagen, setImagen] = useState("");
-  const [tipo, setTipo] = useState("");
-  const [mensaje, setMensaje] = useState(""); // <-- estado para el mensaje de confirmación
+  const [descripcion, setDescripcion] = useState("");
+  const [imagenes, setImagenes] = useState([]);
+  const [subiendo, setSubiendo] = useState(false);
+  const [propiedades, setPropiedades] = useState([]);
 
   const propiedadesRef = collection(db, "propiedades");
 
+  const handleImagenes = (e) => {
+    setImagenes(Array.from(e.target.files));
+  };
+
+  const crearPropiedad = async (e) => {
+    e.preventDefault();
+
+    if (!tipo || !titulo || !precio || !descripcion || imagenes.length === 0) {
+      alert("Completá todos los campos y seleccioná al menos una imagen");
+      return;
+    }
+
+    try {
+      setSubiendo(true);
+
+      const urls = [];
+
+      for (let i = 0; i < imagenes.length; i++) {
+        const file = imagenes[i];
+        const storageRef = ref(
+          storage,
+          `propiedades/${tipo}/${Date.now()}-${file.name}`
+        );
+
+        await uploadBytes(storageRef, file);
+        const url = await getDownloadURL(storageRef);
+        urls.push(url);
+      }
+
+      await addDoc(propiedadesRef, {
+        titulo,
+        precio: Number(precio),
+        descripcion,
+        imagenes: urls,
+        tipo,
+        createdAt: new Date(),
+      });
+
+      setTitulo("");
+      setPrecio("");
+      setDescripcion("");
+      setImagenes([]);
+      obtenerPropiedades();
+
+      alert("Propiedad agregada correctamente ✅");
+    } catch (error) {
+      console.error("Error al agregar la propiedad:", error);
+      alert("Error al agregar la propiedad");
+    } finally {
+      setSubiendo(false);
+    }
+  };
+
   const obtenerPropiedades = async () => {
     if (!tipo) return;
+
     const q = query(propiedadesRef, where("tipo", "==", tipo));
     const data = await getDocs(q);
-    setPropiedades(data.docs.map((d) => ({ ...d.data(), id: d.id })));
+
+    setPropiedades(
+      data.docs.map((doc) => ({
+        ...doc.data(),
+        id: doc.id,
+      }))
+    );
+  };
+
+  const borrarPropiedad = async (id) => {
+    await deleteDoc(doc(db, "propiedades", id));
+    obtenerPropiedades();
   };
 
   useEffect(() => {
     obtenerPropiedades();
   }, [tipo]);
 
-  const crearPropiedad = async (e) => {
-    e.preventDefault();
-    try {
-      await addDoc(propiedadesRef, {
-        titulo,
-        precio,
-        imagen,
-        tipo,
-      });
-      setTitulo("");
-      setPrecio("");
-      setImagen("");
-      setMensaje("✅ Propiedad agregada con éxito!"); // <-- mensaje exitoso
-      obtenerPropiedades();
+  if (!tipo) {
+    return (
+      <div className="container py-5">
+        <h2>¿Qué tipo de propiedad querés administrar?</h2>
 
-      // Desaparece el mensaje después de 3 segundos
-      setTimeout(() => setMensaje(""), 3000);
-    } catch (error) {
-      console.error(error);
-      setMensaje("❌ Error al agregar la propiedad");
-      setTimeout(() => setMensaje(""), 3000);
-    }
-  };
-
-  const borrarPropiedad = async (id) => {
-    const propDoc = doc(db, "propiedades", id);
-    await deleteDoc(propDoc);
-    obtenerPropiedades();
-  };
+        <div className="d-flex flex-wrap gap-2 mt-3">
+          <button className="btn btn-primary" onClick={() => setTipo("casa")}>
+            Casas
+          </button>
+          <button
+            className="btn btn-primary"
+            onClick={() => setTipo("departamento")}
+          >
+            Departamentos
+          </button>
+          <button className="btn btn-primary" onClick={() => setTipo("finca")}>
+            Fincas
+          </button>
+          <button className="btn btn-primary" onClick={() => setTipo("lote")}>
+            Lotes
+          </button>
+          <button className="btn btn-primary" onClick={() => setTipo("local")}>
+            Locales comerciales
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="container py-5">
-      <h1 className="text-bebas mb-4">Panel de Administración</h1>
+      <h2>Panel Admin – {tipo.toUpperCase()}</h2>
 
-      {/* SELECTOR DE TIPO */}
-      {!tipo && (
-        <div className="text-center py-5">
-          <h2 className="mb-4">¿Qué querés administrar?</h2>
+      <button
+        className="btn btn-secondary mb-4"
+        onClick={() => setTipo("")}
+      >
+        Cambiar tipo de propiedad
+      </button>
 
-          <div className="d-flex flex-wrap justify-content-center gap-3">
-            {["casa", "departamento", "finca", "lote", "local"].map((t) => (
-              <button
-                key={t}
-                className="btn btn-outline-dark"
-                onClick={() => setTipo(t)}
-              >
-                {t.toUpperCase()}
-              </button>
-            ))}
-          </div>
+      <form onSubmit={crearPropiedad} className="mb-5">
+        <input
+          type="text"
+          placeholder="Título"
+          className="form-control mb-2"
+          value={titulo}
+          onChange={(e) => setTitulo(e.target.value)}
+        />
 
-          <Link to="/" className="btn btn-secondary mt-4">
-            Volver al sitio
-          </Link>
-        </div>
-      )}
+        <input
+          type="number"
+          placeholder="Precio"
+          className="form-control mb-2"
+          value={precio}
+          onChange={(e) => setPrecio(e.target.value)}
+        />
 
-      {/* PANEL CRUD */}
-      {tipo && (
-        <>
-          <div className="d-flex justify-content-between align-items-center mb-4">
-            <h2>Administrando: {tipo.toUpperCase()}</h2>
+        <textarea
+          placeholder="Descripción (podés escribir largo)"
+          className="form-control mb-2"
+          rows={5}
+          value={descripcion}
+          onChange={(e) => setDescripcion(e.target.value)}
+        />
 
-            <button className="btn btn-secondary" onClick={() => setTipo("")}>
-              Cambiar tipo
-            </button>
-          </div>
+        <input
+          type="file"
+          className="form-control mb-3"
+          multiple
+          accept="image/*"
+          onChange={handleImagenes}
+        />
 
-          {/* MENSAJE DE CONFIRMACIÓN */}
-          {mensaje && (
-            <div className="alert alert-success text-center">{mensaje}</div>
-          )}
+        <button className="btn btn-success" disabled={subiendo}>
+          {subiendo ? "Subiendo imágenes..." : "Agregar propiedad"}
+        </button>
+      </form>
 
-          <form onSubmit={crearPropiedad} className="mb-4">
-            <input
-              type="text"
-              placeholder="Título"
-              className="form-control mb-2"
-              value={titulo}
-              onChange={(e) => setTitulo(e.target.value)}
-              required
-            />
-            <input
-              type="text"
-              placeholder="Precio"
-              className="form-control mb-2"
-              value={precio}
-              onChange={(e) => setPrecio(e.target.value)}
-              required
-            />
-            <input
-              type="text"
-              placeholder="URL de imagen"
-              className="form-control mb-2"
-              value={imagen}
-              onChange={(e) => setImagen(e.target.value)}
-              required
-            />
+      <h4>Propiedades cargadas</h4>
 
-            <button className="btn bg-rosa text-white">
-              Agregar {tipo}
-            </button>
-          </form>
-
-          <div className="row">
-            {propiedades.map((prop) => (
-              <div key={prop.id} className="col-12 col-md-4 mb-3">
-                <div className="card h-100">
-                  <img src={prop.imagen} className="card-img-top" />
-                  <div className="card-body">
-                    <h5>{prop.titulo}</h5>
-                    <p>${prop.precio}</p>
-                    <button
-                      onClick={() => borrarPropiedad(prop.id)}
-                      className="btn btn-danger btn-sm"
-                    >
-                      Eliminar
-                    </button>
-                  </div>
-                </div>
+      <div className="row">
+        {propiedades.map((prop) => (
+          <div key={prop.id} className="col-md-4 mb-4">
+            <div className="card">
+              {prop.imagenes?.[0] && (
+                <img
+                  src={prop.imagenes[0]}
+                  className="card-img-top"
+                  alt={prop.titulo}
+                  style={{ height: 200, objectFit: "cover" }}
+                />
+              )}
+              <div className="card-body">
+                <h5>{prop.titulo}</h5>
+                <p>${prop.precio}</p>
+                <p className="small text-muted">
+                  {prop.descripcion?.slice(0, 100)}...
+                </p>
+                <button
+                  className="btn btn-danger btn-sm"
+                  onClick={() => borrarPropiedad(prop.id)}
+                >
+                  Borrar
+                </button>
               </div>
-            ))}
+            </div>
           </div>
-
-          <Link to="/" className="btn btn-secondary mt-4">
-            Volver al sitio
-          </Link>
-        </>
-      )}
+        ))}
+      </div>
     </div>
   );
 }
