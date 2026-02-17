@@ -179,7 +179,7 @@ function Home() {
             <h3 className="tamano text-bebas text-center" data-aos="fade-up">¿Tenés una propiedad?</h3>
             <div className="row justify-content-center gy-3">
               <div className="col-6">
-                <a href="https://api.whatsapp.com/send?phone=2604345281&text=¡Hola Inmobiliaria SyS👋! Estuve viendo su pagina web y quiero vender mi propiedad" className="link-underline-opacity-0 link-light">
+                <a href="https://api.whatsapp.com/send?phone=2604237530&text=¡Hola Inmobiliaria SyS👋! Estuve viendo su pagina web y quiero vender mi propiedad" className="link-underline-opacity-0 link-light">
                   <div className="card bg-rosa" data-aos="fade-up">
                     <div className="altura d-flex flex-column align-items-center justify-content-center">
                       <i className="bi bi-cash-coin fs-1 text-white"></i>
@@ -189,7 +189,7 @@ function Home() {
                 </a>
               </div>
               <div className="col-6">
-                <a href="https://api.whatsapp.com/send?phone=2604237530&text=¡Hola Inmobiliaria SyS👋! Estuve viendo su pagina web y quiero tasar mi propiedad" className="link-underline-opacity-0 link-light">
+                <a href="https://api.whatsapp.com/send?phone=2604345281&text=¡Hola Inmobiliaria SyS👋! Estuve viendo su pagina web y quiero tasar mi propiedad" className="link-underline-opacity-0 link-light">
                   <div className="card bg-black" data-aos="fade-up">
                     <div className="altura d-flex flex-column align-items-center justify-content-center">
                       <i className="bi bi-pencil-square fs-1 text-white"></i>
