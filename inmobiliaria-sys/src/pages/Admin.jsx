@@ -9,204 +9,258 @@ import {
   query,
   where,
 } from "firebase/firestore";
-import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
+import {
+  ref,
+  uploadBytes,
+  getDownloadURL,
+} from "firebase/storage";
 
 export default function Admin() {
-  const [tipo, setTipo] = useState("");
   const [titulo, setTitulo] = useState("");
   const [precio, setPrecio] = useState("");
   const [descripcion, setDescripcion] = useState("");
+  const [tipo, setTipo] = useState("");
+
+  const [banios, setBanios] = useState("");
+  const [habitaciones, setHabitaciones] = useState("");
+  const [pisos, setPisos] = useState("");
+  const [metros, setMetros] = useState("");
+
   const [imagenes, setImagenes] = useState([]);
-  const [subiendo, setSubiendo] = useState(false);
+  const [preview, setPreview] = useState([]);
+
   const [propiedades, setPropiedades] = useState([]);
+  const [loading, setLoading] = useState(false);
 
   const propiedadesRef = collection(db, "propiedades");
 
   const handleImagenes = (e) => {
-    setImagenes(Array.from(e.target.files));
+    const files = Array.from(e.target.files);
+    setImagenes(files);
+
+    const previews = files.map((file) => URL.createObjectURL(file));
+    setPreview(previews);
   };
+
+  const obtenerPropiedades = async () => {
+    const q = query(propiedadesRef, where("tipo", "==", tipo));
+    const data = await getDocs(q);
+    setPropiedades(data.docs.map((doc) => ({ id: doc.id, ...doc.data() })));
+  };
+
+  useEffect(() => {
+    if (tipo) obtenerPropiedades();
+  }, [tipo]);
 
   const crearPropiedad = async (e) => {
     e.preventDefault();
-
-    if (!tipo || !titulo || !precio || !descripcion || imagenes.length === 0) {
-      alert("Completá todos los campos y seleccioná al menos una imagen");
-      return;
-    }
-
     try {
-      setSubiendo(true);
+      setLoading(true);
 
       const urls = [];
 
-      for (let i = 0; i < imagenes.length; i++) {
-        const file = imagenes[i];
-        const storageRef = ref(
+      for (const file of imagenes) {
+        const imgRef = ref(
           storage,
           `propiedades/${tipo}/${Date.now()}-${file.name}`
         );
-
-        await uploadBytes(storageRef, file);
-        const url = await getDownloadURL(storageRef);
+        await uploadBytes(imgRef, file);
+        const url = await getDownloadURL(imgRef);
         urls.push(url);
       }
 
       await addDoc(propiedadesRef, {
         titulo,
-        precio: Number(precio),
+        precio,
         descripcion,
-        imagenes: urls,
         tipo,
-        createdAt: new Date(),
+        imagenes: urls,
+        banios,
+        habitaciones,
+        pisos,
+        metros,
+        createdAt: Date.now(),
       });
 
       setTitulo("");
       setPrecio("");
       setDescripcion("");
+      setBanios("");
+      setHabitaciones("");
+      setPisos("");
+      setMetros("");
       setImagenes([]);
-      obtenerPropiedades();
+      setPreview([]);
 
-      alert("Propiedad agregada correctamente ✅");
+      obtenerPropiedades();
+      alert("Propiedad cargada correctamente");
     } catch (error) {
-      console.error("Error al agregar la propiedad:", error);
+      console.error(error);
       alert("Error al agregar la propiedad");
     } finally {
-      setSubiendo(false);
+      setLoading(false);
     }
   };
 
-  const obtenerPropiedades = async () => {
-    if (!tipo) return;
-
-    const q = query(propiedadesRef, where("tipo", "==", tipo));
-    const data = await getDocs(q);
-
-    setPropiedades(
-      data.docs.map((doc) => ({
-        ...doc.data(),
-        id: doc.id,
-      }))
-    );
-  };
-
-  const borrarPropiedad = async (id) => {
+  const eliminarPropiedad = async (id) => {
     await deleteDoc(doc(db, "propiedades", id));
     obtenerPropiedades();
   };
-
-  useEffect(() => {
-    obtenerPropiedades();
-  }, [tipo]);
 
   if (!tipo) {
     return (
       <div className="container py-5">
         <h2>¿Qué tipo de propiedad querés administrar?</h2>
 
-        <div className="d-flex flex-wrap gap-2 mt-3">
-          <button className="btn btn-primary" onClick={() => setTipo("casa")}>
-            Casas
-          </button>
+        {["casa", "departamento", "finca", "lote", "local"].map((t) => (
           <button
-            className="btn btn-primary"
-            onClick={() => setTipo("departamento")}
+            key={t}
+            className="btn btn-dark me-2 mt-3"
+            onClick={() => setTipo(t)}
           >
-            Departamentos
+            {t.toUpperCase()}
           </button>
-          <button className="btn btn-primary" onClick={() => setTipo("finca")}>
-            Fincas
-          </button>
-          <button className="btn btn-primary" onClick={() => setTipo("lote")}>
-            Lotes
-          </button>
-          <button className="btn btn-primary" onClick={() => setTipo("local")}>
-            Locales comerciales
-          </button>
-        </div>
+        ))}
       </div>
     );
   }
 
   return (
     <div className="container py-5">
-      <h2>Panel Admin – {tipo.toUpperCase()}</h2>
-
       <button
-        className="btn btn-secondary mb-4"
+        className="btn btn-secondary mb-3"
         onClick={() => setTipo("")}
       >
         Cambiar tipo de propiedad
       </button>
 
-      <form onSubmit={crearPropiedad} className="mb-5">
-        <input
-          type="text"
-          placeholder="Título"
-          className="form-control mb-2"
-          value={titulo}
-          onChange={(e) => setTitulo(e.target.value)}
-        />
+      <h2 className="mb-4">Admin {tipo.toUpperCase()}</h2>
 
-        <input
-          type="number"
-          placeholder="Precio"
-          className="form-control mb-2"
-          value={precio}
-          onChange={(e) => setPrecio(e.target.value)}
-        />
+      <form onSubmit={crearPropiedad} className="row g-3 mb-5">
+        <div className="col-md-6">
+          <input
+            className="form-control"
+            placeholder="Título"
+            value={titulo}
+            onChange={(e) => setTitulo(e.target.value)}
+            required
+          />
+        </div>
 
-        <textarea
-          placeholder="Descripción (podés escribir largo)"
-          className="form-control mb-2"
-          rows={5}
-          value={descripcion}
-          onChange={(e) => setDescripcion(e.target.value)}
-        />
+        <div className="col-md-6">
+          <input
+            className="form-control"
+            placeholder="Precio"
+            value={precio}
+            onChange={(e) => setPrecio(e.target.value)}
+            required
+          />
+        </div>
 
-        <input
-          type="file"
-          className="form-control mb-3"
-          multiple
-          accept="image/*"
-          onChange={handleImagenes}
-        />
+        <div className="col-12">
+          <textarea
+            className="form-control"
+            placeholder="Descripción"
+            rows={5}
+            value={descripcion}
+            onChange={(e) => setDescripcion(e.target.value)}
+            required
+          />
+        </div>
 
-        <button className="btn btn-success" disabled={subiendo}>
-          {subiendo ? "Subiendo imágenes..." : "Agregar propiedad"}
-        </button>
+        <div className="col-md-3">
+          <input
+            className="form-control"
+            placeholder="Baños"
+            type="number"
+            value={banios}
+            onChange={(e) => setBanios(e.target.value)}
+          />
+        </div>
+
+        <div className="col-md-3">
+          <input
+            className="form-control"
+            placeholder="Habitaciones"
+            type="number"
+            value={habitaciones}
+            onChange={(e) => setHabitaciones(e.target.value)}
+          />
+        </div>
+
+        <div className="col-md-3">
+          <input
+            className="form-control"
+            placeholder="Pisos"
+            type="number"
+            value={pisos}
+            onChange={(e) => setPisos(e.target.value)}
+          />
+        </div>
+
+        <div className="col-md-3">
+          <input
+            className="form-control"
+            placeholder="Metros cuadrados"
+            type="number"
+            value={metros}
+            onChange={(e) => setMetros(e.target.value)}
+          />
+        </div>
+
+        <div className="col-12">
+          <input
+            type="file"
+            multiple
+            className="form-control"
+            onChange={handleImagenes}
+            required
+          />
+        </div>
+
+        {/* Preview imágenes */}
+        <div className="col-12 d-flex flex-wrap gap-2">
+          {preview.map((img, i) => (
+            <img
+              key={i}
+              src={img}
+              alt=""
+              style={{
+                width: 100,
+                height: 100,
+                objectFit: "cover",
+                borderRadius: 6,
+                border: "1px solid #ccc",
+              }}
+            />
+          ))}
+        </div>
+
+        <div className="col-12">
+          <button className="btn btn-success" disabled={loading}>
+            {loading ? "Subiendo..." : "Crear propiedad"}
+          </button>
+        </div>
       </form>
 
       <h4>Propiedades cargadas</h4>
 
-      <div className="row">
-        {propiedades.map((prop) => (
-          <div key={prop.id} className="col-md-4 mb-4">
-            <div className="card">
-              {prop.imagenes?.[0] && (
-                <img
-                  src={prop.imagenes[0]}
-                  className="card-img-top"
-                  alt={prop.titulo}
-                  style={{ height: 200, objectFit: "cover" }}
-                />
-              )}
-              <div className="card-body">
-                <h5>{prop.titulo}</h5>
-                <p>${prop.precio}</p>
-                <p className="small text-muted">
-                  {prop.descripcion?.slice(0, 100)}...
-                </p>
-                <button
-                  className="btn btn-danger btn-sm"
-                  onClick={() => borrarPropiedad(prop.id)}
-                >
-                  Borrar
-                </button>
-              </div>
-            </div>
+      {propiedades.map((p) => (
+        <div
+          key={p.id}
+          className="border p-3 mb-2 d-flex justify-content-between align-items-center"
+        >
+          <div>
+            <strong>{p.titulo}</strong> – ${p.precio}
           </div>
-        ))}
-      </div>
+          <button
+            className="btn btn-danger btn-sm"
+            onClick={() => eliminarPropiedad(p.id)}
+          >
+            Eliminar
+          </button>
+        </div>
+      ))}
     </div>
   );
 }

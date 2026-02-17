@@ -12,7 +12,7 @@ export default function Casas() {
       const ref = collection(db, "propiedades");
       const q = query(ref, where("tipo", "==", "casa"));
       const data = await getDocs(q);
-      setCasas(data.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
+      setCasas(data.docs.map((doc) => ({ id: doc.id, ...doc.data() })));
     };
 
     fetchCasas();
@@ -20,23 +20,29 @@ export default function Casas() {
 
   return (
     <div className="container py-5">
-      <h1>Casas</h1>
+      <h1 className="mb-4">Casas</h1>
 
       <div className="row">
         {casas.map((casa) => (
           <div key={casa.id} className="col-md-4 mb-4">
-            <div className="card">
+            <div className="card h-100 shadow-sm">
               <img
                 src={casa.imagenes?.[0]}
                 className="card-img-top"
-                style={{ height: 200, objectFit: "cover" }}
+                style={{ height: 220, objectFit: "cover" }}
               />
-              <div className="card-body">
+              <div className="card-body d-flex flex-column">
                 <h5>{casa.titulo}</h5>
-                <p>${casa.precio}</p>
+                <p className="fw-bold mb-1">${casa.precio}</p>
+
+                <p className="text-muted small mb-2">
+                  {casa.habitaciones} hab · {casa.banios} baños · {casa.metros} m²
+                </p>
 
                 <button
-                  className="btn btn-primary"
+                  className="btn btn-outline-dark mt-auto"
+                  data-bs-toggle="modal"
+                  data-bs-target="#modalDetalle"
                   onClick={() => setSeleccionada(casa)}
                 >
                   Ver propiedad
@@ -47,12 +53,7 @@ export default function Casas() {
         ))}
       </div>
 
-      {seleccionada && (
-        <ModalDetalle
-          propiedad={seleccionada}
-          onClose={() => setSeleccionada(null)}
-        />
-      )}
+      {seleccionada && <ModalDetalle propiedad={seleccionada} />}
     </div>
   );
 }
