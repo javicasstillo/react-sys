@@ -1,12 +1,19 @@
 import { Routes, Route, Link, useNavigate } from "react-router-dom";
 import { useEffect } from "react";
 import AOS from "aos";
-import Admin from "./pages/Admin"; // ✅ Correcto
+import Admin from "./pages/Admin";
 import Casas from "./pages/Casas";
 import Departamentos from "./pages/Departamentos";
 import Fincas from "./pages/Fincas";
 import Lotes from "./pages/Lotes";
 import Locales from "./pages/Locales";
+
+function scrollTo(id) {
+  setTimeout(() => {
+    const el = document.getElementById(id);
+    if (el) el.scrollIntoView({ behavior: "smooth" });
+  }, 100);
+}
 
 function Home() {
   useEffect(() => {
@@ -15,13 +22,12 @@ function Home() {
 
   return (
     <>
-      {/* HEADER */}
       <header>
         <nav className="navbar navbar-expand-lg bg-rosa fixed-top">
           <div className="container">
-            <a className="navbar-brand" href="#banner">
+            <Link to="/" className="navbar-brand" onClick={() => scrollTo("banner")}>
               <img src="/assets/logo.png" alt="logo" className="logo" />
-            </a>
+            </Link>
 
             <button
               className="navbar-toggler"
@@ -35,19 +41,19 @@ function Home() {
             <div className="collapse navbar-collapse" id="navbarNav">
               <ul className="navbar-nav ms-auto">
                 <li className="nav-item">
-                  <a className="nav-link text-white" href="#banner">
+                  <button className="nav-link text-white btn btn-link" onClick={() => scrollTo("banner")}>
                     Inicio
-                  </a>
+                  </button>
                 </li>
                 <li className="nav-item">
-                  <a className="nav-link text-white" href="#nosotros">
+                  <button className="nav-link text-white btn btn-link" onClick={() => scrollTo("nosotros")}>
                     Nosotros
-                  </a>
+                  </button>
                 </li>
                 <li className="nav-item">
-                  <a className="nav-link text-white" href="#propiedades">
+                  <button className="nav-link text-white btn btn-link" onClick={() => scrollTo("menu-propiedades")}>
                     Propiedades
-                  </a>
+                  </button>
                 </li>
                 <li className="nav-item">
                   <Link className="nav-link text-rosa" to="/login">
@@ -61,7 +67,7 @@ function Home() {
       </header>
 
       {/* MAIN */}
-    <main>
+      <main>
         {/* BANNER */}
         <section id="banner" className="portada d-flex align-items-center">
           <div className="container py-5">
@@ -196,7 +202,6 @@ function Home() {
         </section>
 
         {/* NOSOTROS */}
-        
         <section id="nosotros" className="d-flex align-items-center">
           <div className="container py-3">
             <h3 className="text-bebas text-center tamano2" data-aos="fade-up">
@@ -208,7 +213,7 @@ function Home() {
                 <img src="/assets/oficina" alt="imagen" className="w-100" />
               </div>
 
-              <div className="col-12 col-md-6 py-3" data-aos="fade-up">
+                            <div className="col-12 col-md-6 py-3" data-aos="fade-up">
                 <p>
                   Nuestra historia comienza en el año 2003, cuando dos amigos apasionados
                   por el mundo inmobiliario, Carlos Sacon y Fabricio Signes, decidieron
@@ -280,60 +285,44 @@ function Home() {
             </div>
           </div>
         </section>
-
       </main>
 
-
       {/* FOOTER */}
-<footer className="bg-rosa">
+      <footer className="bg-rosa">
         <div className="container py-3">
           <div className="row">
             <article className="col-12 col-md-6 text-center">
-              <a href="#banner">
+              <button onClick={() => scrollTo("banner")} className="bg-transparent border-0">
                 <img src="/assets/logo.png" alt="logo footer" className="w-50" />
-              </a>
+              </button>
             </article>
 
             <article className="col-12 col-md-3 text-center text-md-start pt-4">
               <h6 className="text-white">Contacto</h6>
-              <ul className="list-unstyled">
-                <li><a href="#" className="link-light link-underline-opacity-0">Las Heras 181 - San Rafael</a></li>
-                <li><a href="#" className="link-light link-underline-opacity-0">+54 9 260-4345281</a></li>
-                <li><a href="mailto:sysemprendimientos06@gmail.com" className="link-light link-underline-opacity-0">sysemprendimientos06@gmail.com</a></li>
+              <ul className="list-unstyled text-white">
+                <li>Las Heras 181 - San Rafael</li>
+                <li>+54 9 260-4345281</li>
+                <li>sysemprendimientos06@gmail.com</li>
               </ul>
             </article>
 
             <article className="col-12 col-md-3 text-center text-md-start pt-4">
               <h6 className="text-white">Navegación</h6>
               <ul className="list-unstyled">
-                <li><a href="#banner" className="link-light link-underline-opacity-0">Inicio</a></li>
-                <li><a href="#menu-propiedades" className="link-light link-underline-opacity-0">Propiedades</a></li>
-                <li><a href="#servicios" className="link-light link-underline-opacity-0">Servicios</a></li>
-                <li><a href="#nosotros" className="link-light link-underline-opacity-0">Nosotros</a></li>
-                <li><a href="#contacto" className="link-light link-underline-opacity-0">Contacto</a></li>
+                <li><button className="btn btn-link text-white" onClick={() => scrollTo("banner")}>Inicio</button></li>
+                <li><button className="btn btn-link text-white" onClick={() => scrollTo("menu-propiedades")}>Propiedades</button></li>
+                <li><button className="btn btn-link text-white" onClick={() => scrollTo("servicios")}>Servicios</button></li>
+                <li><button className="btn btn-link text-white" onClick={() => scrollTo("nosotros")}>Nosotros</button></li>
               </ul>
             </article>
-          </div>
-
-          <div className="d-flex flex-column">
-            <div className="ms-auto centrado">
-              <p className="text-white text-center">Seguinos en nuestras redes:</p>
-            </div>
-
-            <div className="d-flex gap-3 fs-4 ms-auto mb-3 centrado">
-              <a href="https://www.instagram.com/inmobiliaria.sys/" className="link-light"><i className="bi bi-instagram"></i></a>
-              <a href="https://www.facebook.com/SYSEmprendimientosInmobiliarios" className="link-light"><i className="bi bi-facebook"></i></a>
-              <a href="#" className="link-light"><i className="bi bi-twitter"></i></a>
-            </div>
           </div>
         </div>
 
         <p className="mb-0 py-3 text-center text-white">
-          &copy; Inmobiliaria SyS | Todos los derechos reservados | Desarrollado por{" "}
+          &copy; Inmobiliaria SyS | Desarrollado por{" "}
           <a href="https://genesys.com.ar/" className="link-dark link-underline-opacity-0">Genesys</a>
         </p>
       </footer>
-
     </>
   );
 }
@@ -368,9 +357,7 @@ function Login() {
                     </div>
 
                     <div className="d-flex justify-content-end">
-                      <button className="btn bg-rosa text-white">
-                        Ingresar
-                      </button>
+                      <button className="btn bg-rosa text-white">Ingresar</button>
                     </div>
                   </form>
                 </div>
@@ -395,6 +382,5 @@ export default function App() {
       <Route path="/lotes" element={<Lotes />} />
       <Route path="/fincas" element={<Fincas />} />
     </Routes>
-
   );
 }
