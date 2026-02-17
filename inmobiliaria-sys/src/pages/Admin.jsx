@@ -1,266 +1,215 @@
-import { useEffect, useState } from "react";
-import { db, storage } from "../firebase";
-import {
-  collection,
-  addDoc,
-  getDocs,
-  deleteDoc,
-  doc,
-  query,
-  where,
-} from "firebase/firestore";
-import {
-  ref,
-  uploadBytes,
-  getDownloadURL,
-} from "firebase/storage";
+import { useEffect, useState } from "react"
+import { collection, addDoc, getDocs, deleteDoc, doc, updateDoc } from "firebase/firestore"
+import { ref, uploadBytes, getDownloadURL } from "firebase/storage"
+import { db, storage } from "../firebase"
 
-export default function Admin() {
-  const [titulo, setTitulo] = useState("");
-  const [precio, setPrecio] = useState("");
-  const [descripcion, setDescripcion] = useState("");
-  const [tipo, setTipo] = useState("");
+const Admin = () => {
+  const [tipo, setTipo] = useState("casas")
+  const [propiedades, setPropiedades] = useState([])
+  const [editandoId, setEditandoId] = useState(null)
 
-  const [banios, setBanios] = useState("");
-  const [habitaciones, setHabitaciones] = useState("");
-  const [pisos, setPisos] = useState("");
-  const [metros, setMetros] = useState("");
+  const [form, setForm] = useState({
+    titulo: "",
+    precio: "",
+    descripcion: "",
+    banos: "",
+    habitaciones: "",
+    pisos: "",
+    metrosCuadrados: "",
+    imagenes: []
+  })
 
-  const [imagenes, setImagenes] = useState([]);
-  const [preview, setPreview] = useState([]);
+  const [preview, setPreview] = useState([])
 
-  const [propiedades, setPropiedades] = useState([]);
-  const [loading, setLoading] = useState(false);
-
-  const propiedadesRef = collection(db, "propiedades");
-
-  const handleImagenes = (e) => {
-    const files = Array.from(e.target.files);
-    setImagenes(files);
-
-    const previews = files.map((file) => URL.createObjectURL(file));
-    setPreview(previews);
-  };
-
-  const obtenerPropiedades = async () => {
-    const q = query(propiedadesRef, where("tipo", "==", tipo));
-    const data = await getDocs(q);
-    setPropiedades(data.docs.map((doc) => ({ id: doc.id, ...doc.data() })));
-  };
+  const fetchProps = async () => {
+    const snapshot = await getDocs(collection(db, tipo))
+    const data = snapshot.docs.map(doc => ({
+      id: doc.id,
+      ...doc.data()
+    }))
+    setPropiedades(data)
+  }
 
   useEffect(() => {
-    if (tipo) obtenerPropiedades();
-  }, [tipo]);
+    fetchProps()
+  }, [tipo])
 
-  const crearPropiedad = async (e) => {
-    e.preventDefault();
-    try {
-      setLoading(true);
+  const handleChange = e => {
+    setForm({ ...form, [e.target.name]: e.target.value })
+  }
 
-      const urls = [];
+  const handleImages = e => {
+    const files = Array.from(e.target.files)
+    setForm({ ...form, imagenes: files })
+    setPreview(files.map(file => URL.createObjectURL(file)))
+  }
 
-      for (const file of imagenes) {
-        const imgRef = ref(
-          storage,
-          `propiedades/${tipo}/${Date.now()}-${file.name}`
-        );
-        await uploadBytes(imgRef, file);
-        const url = await getDownloadURL(imgRef);
-        urls.push(url);
-      }
-
-      await addDoc(propiedadesRef, {
-        titulo,
-        precio,
-        descripcion,
-        tipo,
-        imagenes: urls,
-        banios,
-        habitaciones,
-        pisos,
-        metros,
-        createdAt: Date.now(),
-      });
-
-      setTitulo("");
-      setPrecio("");
-      setDescripcion("");
-      setBanios("");
-      setHabitaciones("");
-      setPisos("");
-      setMetros("");
-      setImagenes([]);
-      setPreview([]);
-
-      obtenerPropiedades();
-      alert("Propiedad cargada correctamente");
-    } catch (error) {
-      console.error(error);
-      alert("Error al agregar la propiedad");
-    } finally {
-      setLoading(false);
+  const subirImagenes = async files => {
+    const urls = []
+    for (const file of files) {
+      const imgRef = ref(storage, `propiedades/${Date.now()}-${file.name}`)
+      await uploadBytes(imgRef, file)
+      const url = await getDownloadURL(imgRef)
+      urls.push(url)
     }
-  };
+    return urls
+  }
 
-  const eliminarPropiedad = async (id) => {
-    await deleteDoc(doc(db, "propiedades", id));
-    obtenerPropiedades();
-  };
+  const resetForm = () => {
+    setForm({
+      titulo: "",
+      precio: "",
+      descripcion: "",
+      banos: "",
+      habitaciones: "",
+      pisos: "",
+      metrosCuadrados: "",
+      imagenes: []
+    })
+    setPreview([])
+    setEditandoId(null)
+  }
 
-  if (!tipo) {
-    return (
-      <div className="container py-5">
-        <h2>¿Qué tipo de propiedad querés administrar?</h2>
+  const crearOEditar = async e => {
+    e.preventDefault()
 
-        {["casa", "departamento", "finca", "lote", "local"].map((t) => (
-          <button
-            key={t}
-            className="btn btn-dark me-2 mt-3"
-            onClick={() => setTipo(t)}
-          >
-            {t.toUpperCase()}
-          </button>
-        ))}
-      </div>
-    );
+    let urls = []
+    if (form.imagenes.length > 0) {
+      urls = await subirImagenes(form.imagenes)
+    }
+
+    if (editandoId) {
+      const refDoc = doc(db, tipo, editandoId)
+      await updateDoc(refDoc, {
+        ...form,
+        imagenes: urls.length ? urls : propiedades.find(p => p.id === editandoId).imagenes
+      })
+    } else {
+      await addDoc(collection(db, tipo), {
+        ...form,
+        imagenes: urls
+      })
+    }
+
+    resetForm()
+    fetchProps()
+  }
+
+  const eliminar = async id => {
+    await deleteDoc(doc(db, tipo, id))
+    fetchProps()
+  }
+
+  const editar = prop => {
+    setEditandoId(prop.id)
+    setForm({
+      titulo: prop.titulo,
+      precio: prop.precio,
+      descripcion: prop.descripcion,
+      banos: prop.banos,
+      habitaciones: prop.habitaciones,
+      pisos: prop.pisos,
+      metrosCuadrados: prop.metrosCuadrados,
+      imagenes: []
+    })
+    setPreview(prop.imagenes)
+  }
+
+  const cortarTexto = texto => {
+    if (!texto) return ""
+    return texto.length > 100 ? texto.substring(0, 100) + "..." : texto
   }
 
   return (
     <div className="container py-5">
-      <button
-        className="btn btn-secondary mb-3"
-        onClick={() => setTipo("")}
-      >
+
+      <button className="btn btn-secondary mb-3" onClick={() => setTipo(tipo === "casas" ? "departamentos" : "casas")}>
         Cambiar tipo de propiedad
       </button>
 
       <h2 className="mb-4">Admin {tipo.toUpperCase()}</h2>
 
-      <form onSubmit={crearPropiedad} className="row g-3 mb-5">
-        <div className="col-md-6">
-          <input
-            className="form-control"
-            placeholder="Título"
-            value={titulo}
-            onChange={(e) => setTitulo(e.target.value)}
-            required
-          />
+      {/* FORM */}
+      <form onSubmit={crearOEditar} className="mb-5">
+        <div className="row g-2 mb-2">
+          <input className="form-control" name="titulo" placeholder="Título" value={form.titulo} onChange={handleChange} required />
+          <input className="form-control" name="precio" placeholder="Precio" value={form.precio} onChange={handleChange} required />
         </div>
 
-        <div className="col-md-6">
-          <input
-            className="form-control"
-            placeholder="Precio"
-            value={precio}
-            onChange={(e) => setPrecio(e.target.value)}
-            required
-          />
+        <textarea className="form-control mb-2" name="descripcion" placeholder="Descripción" value={form.descripcion} onChange={handleChange} required />
+
+        <div className="row g-2 mb-2">
+          <input className="form-control" name="banos" placeholder="Baños" value={form.banos} onChange={handleChange} />
+          <input className="form-control" name="habitaciones" placeholder="Habitaciones" value={form.habitaciones} onChange={handleChange} />
+          <input className="form-control" name="pisos" placeholder="Pisos" value={form.pisos} onChange={handleChange} />
+          <input className="form-control" name="metrosCuadrados" placeholder="Metros cuadrados" value={form.metrosCuadrados} onChange={handleChange} />
         </div>
 
-        <div className="col-12">
-          <textarea
-            className="form-control"
-            placeholder="Descripción"
-            rows={5}
-            value={descripcion}
-            onChange={(e) => setDescripcion(e.target.value)}
-            required
-          />
-        </div>
+        <input type="file" multiple className="form-control mb-2" onChange={handleImages} />
 
-        <div className="col-md-3">
-          <input
-            className="form-control"
-            placeholder="Baños"
-            type="number"
-            value={banios}
-            onChange={(e) => setBanios(e.target.value)}
-          />
-        </div>
+        {preview.length > 0 && (
+          <div className="d-flex gap-2 mb-3 flex-wrap">
+            {preview.map((img, i) => (
+              <img key={i} src={img} style={{ width: 80, height: 80, objectFit: "cover", borderRadius: 6 }} />
+            ))}
+          </div>
+        )}
 
-        <div className="col-md-3">
-          <input
-            className="form-control"
-            placeholder="Habitaciones"
-            type="number"
-            value={habitaciones}
-            onChange={(e) => setHabitaciones(e.target.value)}
-          />
-        </div>
+        <button className="btn btn-success">
+          {editandoId ? "Guardar cambios" : "Crear propiedad"}
+        </button>
 
-        <div className="col-md-3">
-          <input
-            className="form-control"
-            placeholder="Pisos"
-            type="number"
-            value={pisos}
-            onChange={(e) => setPisos(e.target.value)}
-          />
-        </div>
-
-        <div className="col-md-3">
-          <input
-            className="form-control"
-            placeholder="Metros cuadrados"
-            type="number"
-            value={metros}
-            onChange={(e) => setMetros(e.target.value)}
-          />
-        </div>
-
-        <div className="col-12">
-          <input
-            type="file"
-            multiple
-            className="form-control"
-            onChange={handleImagenes}
-            required
-          />
-        </div>
-
-        {/* Preview imágenes */}
-        <div className="col-12 d-flex flex-wrap gap-2">
-          {preview.map((img, i) => (
-            <img
-              key={i}
-              src={img}
-              alt=""
-              style={{
-                width: 100,
-                height: 100,
-                objectFit: "cover",
-                borderRadius: 6,
-                border: "1px solid #ccc",
-              }}
-            />
-          ))}
-        </div>
-
-        <div className="col-12">
-          <button className="btn btn-success" disabled={loading}>
-            {loading ? "Subiendo..." : "Crear propiedad"}
+        {editandoId && (
+          <button type="button" className="btn btn-outline-secondary ms-2" onClick={resetForm}>
+            Cancelar edición
           </button>
-        </div>
+        )}
       </form>
 
-      <h4>Propiedades cargadas</h4>
+      {/* LISTADO */}
+      <h4 className="mb-3">Propiedades cargadas</h4>
 
-      {propiedades.map((p) => (
-        <div
-          key={p.id}
-          className="border p-3 mb-2 d-flex justify-content-between align-items-center"
-        >
-          <div>
-            <strong>{p.titulo}</strong> – ${p.precio}
+      <div className="row g-4">
+        {propiedades.map(prop => (
+          <div key={prop.id} className="col-md-4">
+            <div className="card h-100 shadow-sm">
+              <img
+                src={prop.imagenes?.[0]}
+                className="card-img-top"
+                style={{ height: 200, objectFit: "cover" }}
+              />
+
+              <div className="card-body d-flex flex-column">
+                <h5>{prop.titulo}</h5>
+                <strong className="mb-2">${prop.precio}</strong>
+
+                <p className="small text-muted mb-2">
+                  {cortarTexto(prop.descripcion)}
+                </p>
+
+                <div className="d-flex gap-3 small mb-3">
+                  <span> 🛁: {prop.banos}</span>
+                  <span> 🛏️: {prop.habitaciones}</span>
+                  <span> 🏢: {prop.pisos}</span>
+                  <span> 📐: {prop.metrosCuadrados} m²</span>
+                </div>
+
+                <div className="mt-auto d-flex gap-2">
+                  <button className="btn btn-dark btn-sm w-100" onClick={() => editar(prop)}>
+                    Editar
+                  </button>
+                  <button className="btn btn-danger btn-sm w-100" onClick={() => eliminar(prop.id)}>
+                    Eliminar
+                  </button>
+                </div>
+              </div>
+            </div>
           </div>
-          <button
-            className="btn btn-danger btn-sm"
-            onClick={() => eliminarPropiedad(p.id)}
-          >
-            Eliminar
-          </button>
-        </div>
-      ))}
+        ))}
+      </div>
+
     </div>
-  );
+  )
 }
+
+export default Admin
