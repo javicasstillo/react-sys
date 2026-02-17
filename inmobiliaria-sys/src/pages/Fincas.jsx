@@ -1,38 +1,58 @@
 import { useEffect, useState } from "react";
 import { db } from "../firebase";
 import { collection, getDocs, query, where } from "firebase/firestore";
+import ModalDetalle from "../components/ModalDetalle";
 
-export default function Fincas() {
-  const [fincas, setFincas] = useState([]);
+export default function Casas() {
+  const [casas, setCasas] = useState([]);
+  const [seleccionada, setSeleccionada] = useState(null);
 
   useEffect(() => {
-    const fetchFincas = async () => {
+    const fetchCasas = async () => {
       const ref = collection(db, "propiedades");
       const q = query(ref, where("tipo", "==", "finca"));
       const data = await getDocs(q);
-      setFincas(data.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
+      setCasas(data.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
     };
 
-    fetchFincas();
+    fetchCasas();
   }, []);
 
   return (
     <div className="container py-5">
-      <h1>Fincas</h1>
+      <h1>Casas</h1>
 
       <div className="row">
-        {fincas.map((finca) => (
-          <div key={finca.id} className="col-md-4 mb-4">
+        {casas.map((casa) => (
+          <div key={casa.id} className="col-md-4 mb-4">
             <div className="card">
-              <img src={finca.imagen} className="card-img-top" />
+              <img
+                src={casa.imagenes?.[0]}
+                className="card-img-top"
+                style={{ height: 200, objectFit: "cover" }}
+              />
               <div className="card-body">
-                <h5>{finca.titulo}</h5>
-                <p>${finca.precio}</p>
+                <h5>{casa.titulo}</h5>
+                <p>${casa.precio}</p>
+
+                <button
+                  className="btn btn-primary"
+                  onClick={() => setSeleccionada(casa)}
+                >
+                  Ver propiedad
+                </button>
               </div>
             </div>
           </div>
         ))}
       </div>
+
+      {seleccionada && (
+        <ModalDetalle
+          propiedad={seleccionada}
+          onClose={() => setSeleccionada(null)}
+        />
+      )}
     </div>
   );
 }

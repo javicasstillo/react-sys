@@ -1,38 +1,58 @@
 import { useEffect, useState } from "react";
 import { db } from "../firebase";
 import { collection, getDocs, query, where } from "firebase/firestore";
+import ModalDetalle from "../components/ModalDetalle";
 
-export default function Lotes() {
-  const [lotes, setLotes] = useState([]);
+export default function Casas() {
+  const [casas, setCasas] = useState([]);
+  const [seleccionada, setSeleccionada] = useState(null);
 
   useEffect(() => {
-    const fetchLotes = async () => {
+    const fetchCasas = async () => {
       const ref = collection(db, "propiedades");
       const q = query(ref, where("tipo", "==", "lote"));
       const data = await getDocs(q);
-      setLotes(data.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
+      setCasas(data.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
     };
 
-    fetchLotes();
+    fetchCasas();
   }, []);
 
   return (
     <div className="container py-5">
-      <h1>Lotes</h1>
+      <h1>Casas</h1>
 
       <div className="row">
-        {lotes.map((lote) => (
-          <div key={lote.id} className="col-md-4 mb-4">
+        {casas.map((casa) => (
+          <div key={casa.id} className="col-md-4 mb-4">
             <div className="card">
-              <img src={lote.imagen} className="card-img-top" />
+              <img
+                src={casa.imagenes?.[0]}
+                className="card-img-top"
+                style={{ height: 200, objectFit: "cover" }}
+              />
               <div className="card-body">
-                <h5>{lote.titulo}</h5>
-                <p>${lote.precio}</p>
+                <h5>{casa.titulo}</h5>
+                <p>${casa.precio}</p>
+
+                <button
+                  className="btn btn-primary"
+                  onClick={() => setSeleccionada(casa)}
+                >
+                  Ver propiedad
+                </button>
               </div>
             </div>
           </div>
         ))}
       </div>
+
+      {seleccionada && (
+        <ModalDetalle
+          propiedad={seleccionada}
+          onClose={() => setSeleccionada(null)}
+        />
+      )}
     </div>
   );
 }

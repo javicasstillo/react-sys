@@ -1,38 +1,58 @@
 import { useEffect, useState } from "react";
 import { db } from "../firebase";
 import { collection, getDocs, query, where } from "firebase/firestore";
+import ModalDetalle from "../components/ModalDetalle";
 
-export default function Locales() {
-  const [locales, setLocales] = useState([]);
+export default function Casas() {
+  const [casas, setCasas] = useState([]);
+  const [seleccionada, setSeleccionada] = useState(null);
 
   useEffect(() => {
-    const fetchLocales = async () => {
+    const fetchCasas = async () => {
       const ref = collection(db, "propiedades");
       const q = query(ref, where("tipo", "==", "local"));
       const data = await getDocs(q);
-      setLocales(data.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
+      setCasas(data.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
     };
 
-    fetchLocales();
+    fetchCasas();
   }, []);
 
   return (
     <div className="container py-5">
-      <h1>Locales comerciales</h1>
+      <h1>Casas</h1>
 
       <div className="row">
-        {locales.map((local) => (
-          <div key={local.id} className="col-md-4 mb-4">
+        {casas.map((casa) => (
+          <div key={casa.id} className="col-md-4 mb-4">
             <div className="card">
-              <img src={local.imagen} className="card-img-top" />
+              <img
+                src={casa.imagenes?.[0]}
+                className="card-img-top"
+                style={{ height: 200, objectFit: "cover" }}
+              />
               <div className="card-body">
-                <h5>{local.titulo}</h5>
-                <p>${local.precio}</p>
+                <h5>{casa.titulo}</h5>
+                <p>${casa.precio}</p>
+
+                <button
+                  className="btn btn-primary"
+                  onClick={() => setSeleccionada(casa)}
+                >
+                  Ver propiedad
+                </button>
               </div>
             </div>
           </div>
         ))}
       </div>
+
+      {seleccionada && (
+        <ModalDetalle
+          propiedad={seleccionada}
+          onClose={() => setSeleccionada(null)}
+        />
+      )}
     </div>
   );
 }
