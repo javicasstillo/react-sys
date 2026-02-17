@@ -1,29 +1,46 @@
-export default function ModalDetalle({ propiedad }) {
+import { useEffect } from "react"
+
+export default function ModalDetalle({ propiedad, onClose }) {
+  useEffect(() => {
+    document.body.style.overflow = "hidden"
+    return () => (document.body.style.overflow = "auto")
+  }, [])
+
+  const enviarWhatsapp = () => {
+    window.open(`https://wa.me/${propiedad.whatsapp}`, "_blank")
+  }
+
+  // Cierra si clickean el fondo oscuro
+  const handleBackdropClick = (e) => {
+    if (e.target.classList.contains("modal")) {
+      onClose()
+    }
+  }
+
   return (
     <div
-      className="modal fade"
-      id="modalDetalle"
-      tabIndex="-1"
-      aria-hidden="true"
+      className="modal fade show d-block"
+      style={{ background: "rgba(0,0,0,.7)" }}
+      onClick={handleBackdropClick}
     >
-      <div className="modal-dialog modal-xl modal-dialog-centered modal-dialog-scrollable">
+      <div
+        className="modal-dialog modal-xl modal-dialog-centered modal-dialog-scrollable"
+        onClick={(e) => e.stopPropagation()}  // evita cerrar al clickear dentro
+      >
         <div className="modal-content">
+
           <div className="modal-header">
             <h5 className="modal-title">{propiedad.titulo}</h5>
             <button
               type="button"
               className="btn-close"
-              data-bs-dismiss="modal"
+              onClick={onClose}
             ></button>
           </div>
 
           <div className="modal-body">
-            {/* Carrusel */}
-            <div
-              id="carouselPropiedad"
-              className="carousel slide mb-4"
-              data-bs-ride="carousel"
-            >
+
+            <div id="carouselPropiedad" className="carousel slide mb-3">
               <div className="carousel-inner">
                 {propiedad.imagenes?.map((img, i) => (
                   <div
@@ -33,7 +50,8 @@ export default function ModalDetalle({ propiedad }) {
                     <img
                       src={img}
                       className="d-block w-100"
-                      style={{ maxHeight: "450px", objectFit: "cover" }}
+                      style={{ maxHeight: 450, objectFit: "cover" }}
+                      alt={`Imagen ${i + 1}`}
                     />
                   </div>
                 ))}
@@ -64,29 +82,34 @@ export default function ModalDetalle({ propiedad }) {
               </button>
             </div>
 
-            {/* Datos */}
-            <h4 className="fw-bold">${propiedad.precio}</h4>
+            <p>{propiedad.descripcion}</p>
 
-            <p className="text-muted mb-2">
-              {propiedad.habitaciones} habitaciones · {propiedad.banios} baños ·{" "}
-              {propiedad.pisos} pisos · {propiedad.metros} m²
-            </p>
+            <ul>
+              <li>Baños: {propiedad.banos}</li>
+              <li>Habitaciones: {propiedad.habitaciones}</li>
+              <li>Pisos: {propiedad.pisos}</li>
+              <li>Metros cuadrados: {propiedad.metros}</li>
+            </ul>
 
-            <p style={{ whiteSpace: "pre-line" }}>
-              {propiedad.descripcion}
-            </p>
+            <p><strong>Asesor:</strong> {propiedad.asesor}</p>
+
           </div>
 
           <div className="modal-footer">
+            <button className="btn btn-success" onClick={enviarWhatsapp}>
+              Enviar WhatsApp
+            </button>
             <button
+              type="button"
               className="btn btn-secondary"
-              data-bs-dismiss="modal"
+              onClick={onClose}
             >
               Cerrar
             </button>
           </div>
+
         </div>
       </div>
     </div>
-  );
+  )
 }

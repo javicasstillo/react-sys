@@ -1,59 +1,84 @@
-import { useEffect, useState } from "react";
-import { db } from "../firebase";
-import { collection, getDocs, query, where } from "firebase/firestore";
-import ModalDetalle from "../components/ModalDetalle";
+import { useEffect, useState } from "react"
+import { collection, getDocs } from "firebase/firestore"
+import { db } from "../firebase"
+import ModalDetalle from "../components/ModalDetalle"
 
 export default function Casas() {
-  const [casas, setCasas] = useState([]);
-  const [seleccionada, setSeleccionada] = useState(null);
+  const [casas, setCasas] = useState([])
+  const [seleccionada, setSeleccionada] = useState(null)
 
   useEffect(() => {
-    const fetchCasas = async () => {
-      const ref = collection(db, "propiedades");
-      const q = query(ref, where("tipo", "==", "casa"));
-      const data = await getDocs(q);
-      setCasas(data.docs.map((doc) => ({ id: doc.id, ...doc.data() })));
-    };
+    const fetch = async () => {
+      const snap = await getDocs(collection(db, "casas"))
+      setCasas(snap.docs.map(d => ({ id: d.id, ...d.data() })))
+    }
+    fetch()
+  }, [])
 
-    fetchCasas();
-  }, []);
+  const enviarWhatsapp = numero => {
+    window.open(`https://wa.me/${numero}`, "_blank")
+  }
+
+  const limitarTexto = (texto = "", limite = 100) => {
+    if (texto.length <= limite) return texto
+    return texto.slice(0, limite) + "..."
+  }
 
   return (
     <div className="container py-5">
       <h1 className="mb-4">Casas</h1>
 
       <div className="row">
-        {casas.map((casa) => (
-          <div key={casa.id} className="col-md-4 mb-4">
-            <div className="card h-100 shadow-sm">
-              <img
-                src={casa.imagenes?.[0]}
-                className="card-img-top"
-                style={{ height: 220, objectFit: "cover" }}
-              />
-              <div className="card-body d-flex flex-column">
-                <h5>{casa.titulo}</h5>
-                <p className="fw-bold mb-1">${casa.precio}</p>
+        {casas.map(c => (
+          <div key={c.id} className="col-md-4 mb-4">
+            <div className="card h-100">
 
-                <p className="text-muted small mb-2">
-                  {casa.habitaciones} hab · {casa.banios} baños · {casa.metros} m²
+              <img
+                src={c.imagenes?.[0]}
+                className="card-img-top"
+                style={{ height: 200, objectFit: "cover" }}
+                alt={c.titulo}
+              />
+
+              <div className="card-body d-flex flex-column">
+                <h5 className="mb-1">{c.titulo}</h5>
+                <p className="fw-bold mb-2">${c.precio}</p>
+
+                <p className="text-muted mb-2">
+                  {limitarTexto(c.descripcion, 100)}
                 </p>
 
+                <ul className="list-unstyled small mb-3">
+                  <li>🛏️ Habitaciones: {c.habitaciones}</li>
+                  <li>🚿 Baños: {c.banos}</li>
+                  <li>🏢 Pisos: {c.pisos}</li>
+                  <li>📐 Metros²: {c.metros}</li>
+                </ul>
+
                 <button
-                  className="btn btn-outline-dark mt-auto"
-                  data-bs-toggle="modal"
-                  data-bs-target="#modalDetalle"
-                  onClick={() => setSeleccionada(casa)}
+                  className="btn btn-dark mb-2"
+                  onClick={() => setSeleccionada(c)}
                 >
                   Ver propiedad
                 </button>
+
+                <button
+                  className="btn btn-success mt-auto"
+                  onClick={() => enviarWhatsapp(c.whatsapp)}
+                >
+                  Enviar WhatsApp
+                </button>
               </div>
+
             </div>
           </div>
         ))}
       </div>
 
-      {seleccionada && <ModalDetalle propiedad={seleccionada} />}
+      {seleccionada && (
+        <ModalDetalle propiedad={seleccionada} onClose={() => setSeleccionada(null)} />
+
+      )}
     </div>
-  );
+  )
 }
