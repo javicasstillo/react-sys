@@ -1,139 +1,107 @@
 import { useEffect, useState } from "react"
 import { collection, addDoc, getDocs, deleteDoc, doc, updateDoc } from "firebase/firestore"
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage"
-import { db, storage } from "../firebase"
 import Swal from "sweetalert2"
+import { db, storage } from "../firebase"
 
-const ASESORES = [
-  "Carlos Sacon",
-  "Fabricio Signes",
-  "Alfredo Signes",
-  "Rodolfo Andrade",
-  "Nahuel Barroso",
-  "Leonel Bernardeau",
-  "Silvia Diaz"
-]
-
-const TIPOS = [
-  { label: "Casa", value: "casas" },
-  { label: "Departamento", value: "departamentos" },
-  { label: "Finca", value: "fincas" },
-  { label: "Lote", value: "lotes" },
-  { label: "Local comercial", value: "locales" }
-]
-
-const Admin = () => {
+export default function Admin() {
   const [tipo, setTipo] = useState("")
-  const [propiedades, setPropiedades] = useState([])
-  const [editandoId, setEditandoId] = useState(null)
-  const [loading, setLoading] = useState(false)
+  const [items, setItems] = useState([])
 
-  const [form, setForm] = useState({
-    titulo: "",
-    precio: "",
-    descripcion: "",
-    banos: "",
-    habitaciones: "",
-    pisos: "",
-    metrosCuadrados: "",
-    asesor: "",
-    whatsapp: "",
-    imagenes: []
-  })
-
+  const [titulo, setTitulo] = useState("")
+  const [precio, setPrecio] = useState("")
+  const [descripcion, setDescripcion] = useState("")
+  const [ubicacion, setUbicacion] = useState("")
+  const [banos, setBanos] = useState("")
+  const [habitaciones, setHabitaciones] = useState("")
+  const [pisos, setPisos] = useState("")
+  const [metrosCuadrados, setMetrosCuadrados] = useState("")
+  const [asesor, setAsesor] = useState("")
+  const [whatsapp, setWhatsapp] = useState("")
+  const [imagenes, setImagenes] = useState([])
   const [preview, setPreview] = useState([])
 
-  const fetchProps = async () => {
-    if (!tipo) return
-    const snapshot = await getDocs(collection(db, tipo))
-    setPropiedades(snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })))
-  }
+  const [loading, setLoading] = useState(false)
+  const [editando, setEditando] = useState(null)
 
   useEffect(() => {
-    fetchProps()
+    if (!tipo) return
+
+    const fetch = async () => {
+      const snap = await getDocs(collection(db, tipo))
+      setItems(snap.docs.map(d => ({ id: d.id, ...d.data() })))
+    }
+
+    fetch()
   }, [tipo])
 
-  const handleChange = e => {
-    setForm({ ...form, [e.target.name]: e.target.value })
+  const resetForm = () => {
+    setTitulo("")
+    setPrecio("")
+    setDescripcion("")
+    setUbicacion("")
+    setBanos("")
+    setHabitaciones("")
+    setPisos("")
+    setMetrosCuadrados("")
+    setAsesor("")
+    setWhatsapp("")
+    setImagenes([])
+    setPreview([])
+    setEditando(null)
   }
 
-  // 👉 ACÁ está lo que volvimos a agregar: previews de imágenes
-  const handleImages = e => {
-    const files = Array.from(e.target.files)
-    setForm({ ...form, imagenes: files })
-    const urls = files.map(file => URL.createObjectURL(file))
-    setPreview(urls)
-  }
-
-  const subirImagenes = async files => {
+  const subirImagenes = async () => {
     const urls = []
-    for (const file of files) {
-      const imgRef = ref(storage, `propiedades/${tipo}/${Date.now()}-${file.name}`)
-      await uploadBytes(imgRef, file)
-      urls.push(await getDownloadURL(imgRef))
+
+    for (let img of imagenes) {
+      const imgRef = ref(storage, `propiedades/${tipo}/${Date.now()}-${img.name}`)
+      await uploadBytes(imgRef, img)
+      const url = await getDownloadURL(imgRef)
+      urls.push(url)
     }
+
     return urls
   }
 
-  const resetForm = () => {
-    setForm({
-      titulo: "",
-      precio: "",
-      descripcion: "",
-      banos: "",
-      habitaciones: "",
-      pisos: "",
-      metrosCuadrados: "",
-      asesor: "",
-      whatsapp: "",
-      imagenes: []
-    })
-    setPreview([])
-    setEditandoId(null)
-  }
-
-  const crearOEditar = async e => {
+  const crearPropiedad = async e => {
     e.preventDefault()
-
     try {
       setLoading(true)
 
-      let urls = []
-      if (form.imagenes.length) {
-        urls = await subirImagenes(form.imagenes)
+      const urls = imagenes.length ? await subirImagenes() : []
+
+      const data = {
+        titulo,
+        precio,
+        descripcion,
+        ubicacion,
+        banos,
+        habitaciones,
+        pisos,
+        metrosCuadrados,
+        imagenes: urls,
+        asesor,
+        whatsapp
       }
 
-      if (editandoId) {
-        const refDoc = doc(db, tipo, editandoId)
-        await updateDoc(refDoc, {
-          ...form,
-          imagenes: urls.length
-            ? urls
-            : propiedades.find(p => p.id === editandoId).imagenes
+      if (editando) {
+        await updateDoc(doc(db, tipo, editando.id), {
+          ...data,
+          imagenes: urls.length ? urls : editando.imagenes
         })
       } else {
-        await addDoc(collection(db, tipo), {
-          ...form,
-          imagenes: urls
-        })
+        await addDoc(collection(db, tipo), data)
       }
 
-      Swal.fire({
-        icon: "success",
-        title: "Propiedad cargada con éxito",
-        confirmButtonText: "OK"
-      })
-
+      Swal.fire("Éxito", "Propiedad cargada con éxito", "success")
       resetForm()
-      fetchProps()
-    } catch (error) {
-      console.error(error)
-      Swal.fire({
-        icon: "error",
-        title: "Ocurrió un error",
-        text: "Intenta más tarde o contactá a soporte",
-        confirmButtonText: "OK"
-      })
+
+      const snap = await getDocs(collection(db, tipo))
+      setItems(snap.docs.map(d => ({ id: d.id, ...d.data() })))
+    } catch (err) {
+      console.error(err)
+      Swal.fire("Error", "Ocurrió un error, intenta más tarde o contacta a soporte", "error")
     } finally {
       setLoading(false)
     }
@@ -141,111 +109,98 @@ const Admin = () => {
 
   const eliminar = async id => {
     await deleteDoc(doc(db, tipo, id))
-    fetchProps()
+    setItems(items.filter(i => i.id !== id))
   }
 
-  const editar = prop => {
-    setEditandoId(prop.id)
-    setForm({ ...prop, imagenes: [] })
-    setPreview(prop.imagenes || [])
+  const handleEdit = item => {
+    setEditando(item)
+    setTitulo(item.titulo)
+    setPrecio(item.precio)
+    setDescripcion(item.descripcion)
+    setUbicacion(item.ubicacion || "")
+    setBanos(item.banos)
+    setHabitaciones(item.habitaciones)
+    setPisos(item.pisos)
+    setMetrosCuadrados(item.metrosCuadrados)
+    setAsesor(item.asesor)
+    setWhatsapp(item.whatsapp)
+    setPreview(item.imagenes || [])
+    setImagenes([])
   }
 
-  const cortar = txt => (txt?.length > 100 ? txt.slice(0, 100) + "..." : txt)
+  const handlePreview = files => {
+    setImagenes(files)
+    const prevs = Array.from(files).map(file => URL.createObjectURL(file))
+    setPreview(prevs)
+  }
 
   return (
     <div className="container py-5">
+      <h1>Panel de Administrador</h1>
 
       {!tipo && (
-        <>
-          <h2 className="mb-3">¿Qué tipo de propiedad querés cargar?</h2>
-          <div className="d-flex gap-2 flex-wrap">
-            {TIPOS.map(t => (
-              <button
-                key={t.value}
-                className="btn btn-dark"
-                onClick={() => setTipo(t.value)}
-              >
-                {t.label}
-              </button>
-            ))}
-          </div>
-        </>
+        <div className="mb-4">
+          <h5>¿Qué querés cargar?</h5>
+          {["casas", "departamentos", "fincas", "lotes", "locales"].map(t => (
+            <button key={t} className="btn btn-dark me-2 mb-2" onClick={() => setTipo(t)}>
+              {t.toUpperCase()}
+            </button>
+          ))}
+        </div>
       )}
 
       {tipo && (
         <>
-          <button className="btn btn-secondary mb-3" onClick={() => setTipo("")}>
-            Cambiar tipo de propiedad
+          <button className="btn btn-outline-secondary mb-3" onClick={() => setTipo("")}>
+            Cambiar tipo
           </button>
 
-          <h2>Admin {tipo.toUpperCase()}</h2>
+          <form onSubmit={crearPropiedad} className="card p-4 mb-5">
 
-          <form onSubmit={crearOEditar} className="mb-5">
+            <input className="form-control mb-2" placeholder="Título" value={titulo} onChange={e => setTitulo(e.target.value)} required />
+            <input className="form-control mb-2" placeholder="Precio" value={precio} onChange={e => setPrecio(e.target.value)} required />
+            <textarea className="form-control mb-2" placeholder="Descripción" rows={4} value={descripcion} onChange={e => setDescripcion(e.target.value)} required />
 
-            <input className="form-control mb-2" name="titulo" placeholder="Título" value={form.titulo} onChange={handleChange} required />
-            <input className="form-control mb-2" name="precio" placeholder="Precio" value={form.precio} onChange={handleChange} required />
+            <input className="form-control mb-2" placeholder="Ubicación" value={ubicacion} onChange={e => setUbicacion(e.target.value)} required />
 
-            <textarea className="form-control mb-2" name="descripcion" placeholder="Descripción" value={form.descripcion} onChange={handleChange} />
+            <input className="form-control mb-2" placeholder="Baños" value={banos} onChange={e => setBanos(e.target.value)} />
+            <input className="form-control mb-2" placeholder="Habitaciones" value={habitaciones} onChange={e => setHabitaciones(e.target.value)} />
+            <input className="form-control mb-2" placeholder="Pisos" value={pisos} onChange={e => setPisos(e.target.value)} />
+            <input className="form-control mb-2" placeholder="Metros cuadrados" value={metrosCuadrados} onChange={e => setMetrosCuadrados(e.target.value)} />
 
-            <div className="row g-2 mb-2">
-              <input className="form-control" name="banos" placeholder="Baños" value={form.banos} onChange={handleChange} />
-              <input className="form-control" name="habitaciones" placeholder="Habitaciones" value={form.habitaciones} onChange={handleChange} />
-              <input className="form-control" name="pisos" placeholder="Pisos" value={form.pisos} onChange={handleChange} />
-              <input className="form-control" name="metrosCuadrados" placeholder="Metros cuadrados" value={form.metrosCuadrados} onChange={handleChange} />
-            </div>
-
-            <select className="form-control mb-2" name="asesor" value={form.asesor} onChange={handleChange} required>
+            <select className="form-select mb-2" value={asesor} onChange={e => setAsesor(e.target.value)} required>
               <option value="">Asesor Designado</option>
-              {ASESORES.map(a => <option key={a} value={a}>{a}</option>)}
+              {["Carlos Sacon", "Fabricio Signes", "Alfredo Signes", "Rodolfo Andrade", "Nahuel Barroso", "Leonel Bernardeau", "Silvia Diaz"].map(a => (
+                <option key={a} value={a}>{a}</option>
+              ))}
             </select>
 
-            <input className="form-control mb-2" type="number" name="whatsapp" placeholder="Whatsapp" value={form.whatsapp} onChange={handleChange} required />
+            <input className="form-control mb-3" placeholder="WhatsApp" value={whatsapp} onChange={e => setWhatsapp(e.target.value)} required />
 
-            <input type="file" multiple className="form-control mb-2" onChange={handleImages} />
+            <input type="file" className="form-control mb-3" multiple accept="image/*" onChange={e => handlePreview(e.target.files)} />
 
-            {/* 👉 PREVIEW DE IMÁGENES */}
-            {preview.length > 0 && (
-              <div className="d-flex gap-2 flex-wrap mb-3">
-                {preview.map((img, i) => (
-                  <img
-                    key={i}
-                    src={img}
-                    alt="preview"
-                    style={{
-                      width: 80,
-                      height: 80,
-                      objectFit: "cover",
-                      borderRadius: 6,
-                      border: "1px solid #ddd"
-                    }}
-                  />
-                ))}
-              </div>
-            )}
+            <div className="d-flex gap-2 flex-wrap mb-3">
+              {preview.map((p, i) => (
+                <img key={i} src={p} style={{ width: 80, height: 80, objectFit: "cover", borderRadius: 6 }} />
+              ))}
+            </div>
 
-            <button className="btn btn-success" disabled={loading}>
-              {loading ? "Creando propiedad..." : editandoId ? "Guardar cambios" : "Crear propiedad"}
+            <button className="btn btn-dark" disabled={loading}>
+              {loading ? "Creando propiedad..." : editando ? "Guardar cambios" : "Crear propiedad"}
             </button>
           </form>
 
-          <div className="row g-4">
-            {propiedades.map(p => (
-              <div key={p.id} className="col-md-4">
-                <div className="card h-100 shadow">
-                  <img src={p.imagenes?.[0]} className="card-img-top" style={{ height: 200, objectFit: "cover" }} />
-
+          <h4>Propiedades cargadas</h4>
+          <div className="row">
+            {items.map(item => (
+              <div key={item.id} className="col-md-4 mb-3">
+                <div className="card h-100">
+                  <img src={item.imagenes?.[0]} className="card-img-top" style={{ height: 180, objectFit: "cover" }} />
                   <div className="card-body">
-                    <h5>{p.titulo}</h5>
-                    <strong>${p.precio}</strong>
-                    <p className="small text-muted">{cortar(p.descripcion)}</p>
-
-                    <p className="small mb-1"><strong>Asesor:</strong> {p.asesor}</p>
-                    <p className="small mb-3"><strong>WhatsApp:</strong> {p.whatsapp}</p>
-
-                    <div className="d-flex gap-2">
-                      <button className="btn btn-dark btn-sm w-100" onClick={() => editar(p)}>Editar</button>
-                      <button className="btn btn-danger btn-sm w-100" onClick={() => eliminar(p.id)}>Eliminar</button>
-                    </div>
+                    <h5>{item.titulo}</h5>
+                    <p>{item.descripcion?.slice(0, 100)}...</p>
+                    <button className="btn btn-sm btn-outline-dark me-2" onClick={() => handleEdit(item)}>Editar</button>
+                    <button className="btn btn-sm btn-outline-danger" onClick={() => eliminar(item.id)}>Eliminar</button>
                   </div>
                 </div>
               </div>
@@ -253,9 +208,6 @@ const Admin = () => {
           </div>
         </>
       )}
-
     </div>
   )
 }
-
-export default Admin
