@@ -1,76 +1,88 @@
-import { useEffect, useState } from "react"
-import { useParams } from "react-router-dom"
-import { doc, getDoc } from "firebase/firestore"
-import { db } from "../firebase"
+import { useEffect, useState } from "react";
+import { useParams, Link } from "react-router-dom";
+import { doc, getDoc } from "firebase/firestore";
+import { db } from "../firebase";
 
-export default function DetallePropiedad() {
-  const { id, tipo } = useParams()
-  const [propiedad, setPropiedad] = useState(null)
-  const [loading, setLoading] = useState(true)
+export default function PropiedadDetalle() {
+  const { tipo, id } = useParams();
+  const [propiedad, setPropiedad] = useState(null);
 
   useEffect(() => {
-    const fetchPropiedad = async () => {
+    const fetch = async () => {
       try {
-        const ref = doc(db, tipo, id)
-        const snap = await getDoc(ref)
-
+        const snap = await getDoc(doc(db, tipo, id));
         if (snap.exists()) {
-          setPropiedad({ id: snap.id, ...snap.data() })
-        } else {
-          console.log("No existe la propiedad")
+          setPropiedad(snap.data());
         }
-      } catch (error) {
-        console.error("Error cargando propiedad:", error)
-      } finally {
-        setLoading(false)
+      } catch (e) {
+        console.error("Error cargando propiedad:", e);
       }
-    }
+    };
+    fetch();
+  }, [tipo, id]);
 
-    fetchPropiedad()
-  }, [id, tipo])
+  if (!propiedad) return <p className="text-center py-5">Cargando propiedad...</p>;
 
-  if (loading) return <h2 className="text-center mt-5">Cargando propiedad...</h2>
-
-  if (!propiedad) return <h2 className="text-center mt-5">Propiedad no encontrada</h2>
+  const linkPropiedad = window.location.href;
+  const mensaje = encodeURIComponent(
+    `Te quiero consultar por esta propiedad: ${linkPropiedad}`
+  );
 
   const enviarWhatsapp = () => {
-    const mensaje = encodeURIComponent(
-      `Hola! Te quiero consultar por esta propiedad: ${window.location.href}`
-    )
-    window.open(`https://wa.me/${propiedad.whatsapp}?text=${mensaje}`, "_blank")
-  }
+    window.open(`https://wa.me/${propiedad.whatsapp}?text=${mensaje}`, "_blank");
+  };
 
   return (
     <div className="container py-5">
-      <h1>{propiedad.titulo}</h1>
-      <h3 className="text-success">${propiedad.precio}</h3>
 
-      <div className="row my-4">
-        {propiedad.imagenes?.map((img, i) => (
-          <div key={i} className="col-md-4 mb-3">
-            <img
-              src={img}
-              className="img-fluid rounded"
-              style={{ height: 220, objectFit: "cover", width: "100%" }}
-            />
-          </div>
-        ))}
+      <Link to={`/${tipo}`} className="btn btn-outline-secondary mb-3">
+        ← Volver
+      </Link>
+
+      <h1 className="mb-3">{propiedad.titulo}</h1>
+
+      {/* CARROUSEL EXACTO AL MODAL */}
+      <div id="carouselPropiedad" className="carousel slide mb-4">
+        <div className="carousel-inner">
+          {propiedad.imagenes?.map((img, i) => (
+            <div key={i} className={`carousel-item ${i === 0 ? "active" : ""}`}>
+              <img
+                src={img}
+                className="d-block w-100"
+                style={{ maxHeight: 450, objectFit: "cover" }}
+              />
+            </div>
+          ))}
+        </div>
+
+        <button className="carousel-control-prev" type="button" data-bs-target="#carouselPropiedad" data-bs-slide="prev">
+          <span className="carousel-control-prev-icon" style={{ filter: "invert(1)" }}></span>
+        </button>
+
+        <button className="carousel-control-next" type="button" data-bs-target="#carouselPropiedad" data-bs-slide="next">
+          <span className="carousel-control-next-icon" style={{ filter: "invert(1)" }}></span>
+        </button>
       </div>
 
+      {/* DESCRIPCIÓN */}
       <p>{propiedad.descripcion}</p>
 
-      <ul>
-        <li>Habitaciones: {propiedad.habitaciones}</li>
-        <li>Baños: {propiedad.banos}</li>
-        <li>Pisos: {propiedad.pisos}</li>
-        <li>Metros cuadrados: {propiedad.metrosCuadrados}</li>
-        <li>Ubicación: {propiedad.ubicacion}</li>
-        <li>Asesor: {propiedad.asesor}</li>
+      {/* DATOS IGUAL QUE EL MODAL */}
+      <ul className="list-group mb-4">
+        <li className="list-group-item">🛏 Habitaciones: {propiedad.habitaciones}</li>
+        <li className="list-group-item">🛁 Baños: {propiedad.banos}</li>
+        <li className="list-group-item">🏢 Pisos: {propiedad.pisos}</li>
+        <li className="list-group-item">📐 Metros cuadrados: {propiedad.metrosCuadrados}</li>
+        <li className="list-group-item">📍 Ubicación: {propiedad.ubicacion}</li>
       </ul>
 
-      <button className="btn btn-success mt-3" onClick={enviarWhatsapp}>
+      <p><strong>Asesor:</strong> {propiedad.asesor}</p>
+      <p><strong>Precio:</strong> ${propiedad.precio}</p>
+
+      <button className="btn btn-success" onClick={enviarWhatsapp}>
         Enviar WhatsApp
       </button>
+
     </div>
-  )
+  );
 }

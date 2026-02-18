@@ -14,12 +14,6 @@ export default function Casas() {
     fetchCasas()
   }, [])
 
-  const enviarWhatsapp = (numero, link) => {
-    const mensaje = encodeURIComponent(
-      `Hola! Te quiero consultar por esta propiedad: ${link}`
-    )
-    window.open(`https://wa.me/${numero}?text=${mensaje}`, "_blank")
-  }
 
   return (
     <div className="container py-5">
@@ -57,17 +51,6 @@ export default function Casas() {
                   Ver propiedad
                 </Link>
 
-                <button
-                  className="btn btn-success mt-auto"
-                  onClick={() =>
-                    enviarWhatsapp(
-                      c.whatsapp,
-                      `${window.location.origin}/propiedad/${c.id}`
-                    )
-                  }
-                >
-                  WhatsApp
-                </button>
               </div>
 
             </div>

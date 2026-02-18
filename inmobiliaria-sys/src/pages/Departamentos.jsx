@@ -15,8 +15,6 @@ export default function Departamentos() {
     fetch()
   }, [])
 
-  const enviarWhatsapp = numero => window.open(`https://wa.me/${numero}`, "_blank")
-
   return (
     <div className="container py-5">
       <h1>Departamentos</h1>
@@ -44,14 +42,12 @@ export default function Departamentos() {
                 <Link to={`/propiedad/departamentos/${d.id}`} className="btn btn-dark">
                   Ver propiedad
                 </Link>
-                <button className="btn btn-success mt-auto" onClick={() => enviarWhatsapp(d.whatsapp)}>Enviar WhatsApp</button>
               </div>
             </div>
           </div>
         ))}
       </div>
 
-      {seleccionada && <ModalDetalle propiedad={seleccionada} onClose={() => setSeleccionada(null)} />}
     </div>
   )
 }
