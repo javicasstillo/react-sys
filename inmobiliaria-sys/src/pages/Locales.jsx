@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react"
 import { collection, getDocs } from "firebase/firestore"
 import { db } from "../firebase"
-import ModalDetalle from "../components/ModalDetalle"
+import { Link } from "react-router-dom"
 
 export default function Departamentos() {
   const [departamentos, setDepartamentos] = useState([])
@@ -41,7 +41,9 @@ export default function Departamentos() {
                   <li>Metros²: {d.metrosCuadrados}</li>
                 </ul>
 
-                <button className="btn btn-dark mb-2" onClick={() => setSeleccionada(d)}>Ver propiedad</button>
+                <Link to={`/propiedad/locales/${l.id}`} className="btn btn-dark">
+                  Ver propiedad
+                </Link>
                 <button className="btn btn-success mt-auto" onClick={() => enviarWhatsapp(d.whatsapp)}>Enviar WhatsApp</button>
               </div>
             </div>

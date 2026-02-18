@@ -7,6 +7,7 @@ import Departamentos from "./pages/Departamentos";
 import Fincas from "./pages/Fincas";
 import Lotes from "./pages/Lotes";
 import Locales from "./pages/Locales";
+import PropiedadDetalle from "./pages/PropiedadDetalle"
 
 function scrollTo(id) {
   setTimeout(() => {
@@ -382,6 +383,7 @@ export default function App() {
       <Route path="/locales" element={<Locales />} />
       <Route path="/lotes" element={<Lotes />} />
       <Route path="/fincas" element={<Fincas />} />
+      <Route path="/propiedad/:tipo/:id" element={<PropiedadDetalle />} />
     </Routes>
   );
 }
