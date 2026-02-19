@@ -8,6 +8,7 @@ import Fincas from "./pages/Fincas";
 import Lotes from "./pages/Lotes";
 import Locales from "./pages/Locales";
 import PropiedadDetalle from "./pages/PropiedadDetalle"
+import { Collapse } from "bootstrap";
 
 function scrollTo(id) {
   setTimeout(() => {
@@ -15,6 +16,18 @@ function scrollTo(id) {
     if (el) el.scrollIntoView({ behavior: "smooth" });
   }, 100);
 }
+
+
+
+function cerrarMenu() {
+  const nav = document.getElementById("navbarNav");
+  if (!nav) return;
+
+  const instance = Collapse.getOrCreateInstance(nav);
+  instance.hide();
+}
+
+
 
 function Home() {
   useEffect(() => {
@@ -33,34 +46,80 @@ function Home() {
             <button
               className="navbar-toggler"
               type="button"
-              data-bs-toggle="collapse"
-              data-bs-target="#navbarNav"
+              onClick={() => {
+                const nav = document.getElementById("navbarNav");
+                if (!nav) return;
+
+                const instance = Collapse.getOrCreateInstance(nav);
+                instance.toggle();
+              }}
             >
               <span className="navbar-toggler-icon"></span>
             </button>
 
 
+
+
+
+
             <div className="collapse navbar-collapse" id="navbarNav">
               <ul className="navbar-nav ms-auto">
                 <li className="nav-item">
-                  <button className="nav-link text-white btn btn-link" onClick={() => scrollTo("banner")}>
+                  <button
+                    className="nav-link text-white btn btn-link"
+                    onClick={() => {
+                      scrollTo("banner");
+                      cerrarMenu();
+                    }}
+                  >
                     Inicio
                   </button>
                 </li>
+                
                 <li className="nav-item">
-                  <button className="nav-link text-white btn btn-link" onClick={() => scrollTo("nosotros")}>
-                    Nosotros
-                  </button>
-                </li>
-                <li className="nav-item">
-                  <button className="nav-link text-white btn btn-link" onClick={() => scrollTo("menu-propiedades")}>
+                  <button
+                    className="nav-link text-white btn btn-link"
+                    onClick={() => {
+                      scrollTo("menu-propiedades");
+                      cerrarMenu();
+                    }}
+                  >
                     Propiedades
                   </button>
+
                 </li>
                 <li className="nav-item">
-                  <Link className="nav-link text-rosa" to="/login">
+                  <button
+                    className="nav-link text-white btn btn-link"
+                    onClick={() => {
+                      scrollTo("servicios");
+                      cerrarMenu();
+                    }}
+                  >
+                    Servicios
+                  </button>
+                </li>
+                <li className="nav-item">
+                  <button
+                    className="nav-link text-white btn btn-link"
+                    onClick={() => {
+                      scrollTo("nosotros");
+                      cerrarMenu();
+                    }}
+                  >
+                    Nosotros
+                  </button>
+
+                </li>
+                <li className="nav-item">
+                  <Link
+                    className="nav-link text-rosa"
+                    to="/login"
+                    onClick={cerrarMenu}
+                  >
                     Iniciar sesión
                   </Link>
+
                 </li>
               </ul>
             </div>
