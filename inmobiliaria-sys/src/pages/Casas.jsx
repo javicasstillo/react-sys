@@ -38,17 +38,17 @@ export default function Casas() {
                 <div className="row  gy-3">
                   <div className="col-6 ">
                     
-                    <div className="rounded bg-dark text-white text-center p-3">
+                    <div className="rounded bg-body-secondary  text-center p-3">
                       <p className="mb-0"> {c.banos} Baños</p>
                     </div>
                   </div>
                   <div className="col-6">
-                    <div className="rounded bg-dark text-white text-center p-3">
+                    <div className="rounded bg-body-secondary   text-center p-3">
                       <p className="mb-0"> {c.metrosCuadrados} M²</p>
                     </div>
                   </div>
                   <div className="col-12"> 
-                    <div className="rounded  bg-dark text-white text-center p-3">
+                    <div className="rounded bg-body-secondary   text-center p-3">
                       <p className="mb-0"> {c.habitaciones} Habitaciones</p>
                     </div>
                   </div>
