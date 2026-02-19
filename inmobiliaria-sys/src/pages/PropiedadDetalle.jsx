@@ -25,7 +25,7 @@ export default function PropiedadDetalle() {
 
   const linkPropiedad = window.location.href;
   const mensaje = encodeURIComponent(
-    `Te quiero consultar por esta propiedad: ${linkPropiedad}`
+    `Hola! Te quiero consultar por esta propiedad: ${linkPropiedad}`
   );
 
   const enviarWhatsapp = () => {
@@ -33,13 +33,15 @@ export default function PropiedadDetalle() {
   };
 
   return (
-    <div className="container py-5">
+    <div className="container py-3">
 
       <Link to={`/${tipo}`} className="btn btn-outline-secondary mb-3">
         ← Volver
       </Link>
 
-      <h1 className="mb-3">{propiedad.titulo}</h1>
+      <h1 className="mb-3 text-center">{propiedad.titulo}</h1>
+      <p className="fw-bold text-center tamano2 text-rosa"> ${propiedad.precio} USD</p>
+      
 
       {/* CARROUSEL EXACTO AL MODAL */}
       <div id="carouselPropiedad" className="carousel slide mb-4">
@@ -63,25 +65,42 @@ export default function PropiedadDetalle() {
           <span className="carousel-control-next-icon" style={{ filter: "invert(1)" }}></span>
         </button>
       </div>
-
+      <div className="row gy-3">
+        <div className="col-6 col-md-4">
+          <p className="p-3  text-white bg-rosa text-center rounded h-100">{propiedad.banos} Baños </p>
+        </div>
+        <div className="col-6 col-md-4">
+          <p className="p-3  text-white bg-rosa  text-center rounded h-100"> {propiedad.habitaciones} Habitaciones</p>
+        </div>
+        <div className="col-6 col-md-4">
+          <p className="p-3  text-white bg-rosa  text-center rounded h-100"> {propiedad.metrosCuadrados} M²</p>
+        </div>
+        <div className="col-6 col-md-12">
+          <p className="p-3  text-white bg-rosa  text-center rounded h-100"> <i class="bi bi-geo-alt-fill fs-5"></i> {propiedad.ubicacion}</p>
+        </div>
+        
+      </div>
       {/* DESCRIPCIÓN */}
-      <p>{propiedad.descripcion}</p>
+      <p className="py-3">{propiedad.descripcion}</p>
 
       {/* DATOS IGUAL QUE EL MODAL */}
-      <ul className="list-group mb-4">
-        <li className="list-group-item">🛏 Habitaciones: {propiedad.habitaciones}</li>
-        <li className="list-group-item">🛁 Baños: {propiedad.banos}</li>
-        <li className="list-group-item">🏢 Pisos: {propiedad.pisos}</li>
-        <li className="list-group-item">📐 Metros cuadrados: {propiedad.metrosCuadrados}</li>
-        <li className="list-group-item">📍 Ubicación: {propiedad.ubicacion}</li>
-      </ul>
+      
+      
+      <div className="row justify-content-center">
 
-      <p><strong>Asesor:</strong> {propiedad.asesor}</p>
-      <p><strong>Precio:</strong> ${propiedad.precio}</p>
+        <div className="col-6 text-center">
+          <p className="rounded bg-body-secondary h-100"> <strong>Asesor Designado:</strong> {propiedad.asesor}</p>
+        </div>
+        <div className="col-6">
+          <button className="rounded h-100 btn bg-rosa text-white" onClick={enviarWhatsapp}>
+            <i class="bi bi-whatsapp fs-5"></i> Enviar WhatsApp
+          </button>
+        </div>
+      </div>
+      
+      
 
-      <button className="btn btn-success" onClick={enviarWhatsapp}>
-        Enviar WhatsApp
-      </button>
+      
 
     </div>
   );

@@ -43,6 +43,17 @@ body {
    COLORES Y TAMAÑOS
 ======================= */
 
+.titilar {
+  animation: titilar 2s infinite;
+}
+
+@keyframes titilar {
+  0%   { opacity: 1; }
+  50%  { opacity: 0; }
+  100% { opacity: 1; }
+}
+
+
 .text-rosa {
     color: #DA9FA7;
 }

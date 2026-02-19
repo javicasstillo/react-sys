@@ -14,7 +14,6 @@ export default function Admin() {
   const [ubicacion, setUbicacion] = useState("")
   const [banos, setBanos] = useState("")
   const [habitaciones, setHabitaciones] = useState("")
-  const [pisos, setPisos] = useState("")
   const [metrosCuadrados, setMetrosCuadrados] = useState("")
   const [asesor, setAsesor] = useState("")
   const [whatsapp, setWhatsapp] = useState("")
@@ -42,7 +41,6 @@ export default function Admin() {
     setUbicacion("")
     setBanos("")
     setHabitaciones("")
-    setPisos("")
     setMetrosCuadrados("")
     setAsesor("")
     setWhatsapp("")
@@ -78,7 +76,6 @@ export default function Admin() {
         ubicacion,
         banos,
         habitaciones,
-        pisos,
         metrosCuadrados,
         imagenes: urls,
         asesor,
@@ -120,7 +117,6 @@ export default function Admin() {
     setUbicacion(item.ubicacion || "")
     setBanos(item.banos)
     setHabitaciones(item.habitaciones)
-    setPisos(item.pisos)
     setMetrosCuadrados(item.metrosCuadrados)
     setAsesor(item.asesor)
     setWhatsapp(item.whatsapp)
@@ -165,7 +161,6 @@ export default function Admin() {
 
             <input className="form-control mb-2" placeholder="Baños" value={banos} onChange={e => setBanos(e.target.value)} />
             <input className="form-control mb-2" placeholder="Habitaciones" value={habitaciones} onChange={e => setHabitaciones(e.target.value)} />
-            <input className="form-control mb-2" placeholder="Pisos" value={pisos} onChange={e => setPisos(e.target.value)} />
             <input className="form-control mb-2" placeholder="Metros cuadrados" value={metrosCuadrados} onChange={e => setMetrosCuadrados(e.target.value)} />
 
             <select className="form-select mb-2" value={asesor} onChange={e => setAsesor(e.target.value)} required>

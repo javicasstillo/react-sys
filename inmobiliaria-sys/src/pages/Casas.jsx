@@ -17,7 +17,7 @@ export default function Casas() {
 
   return (
     <div className="container py-5">
-      <h1>Casas</h1>
+      <h1 className="text-bebas tamano2 text-center">Casas</h1>
 
       <div className="row">
         {casas.map(c => (
@@ -32,22 +32,46 @@ export default function Casas() {
               />
 
               <div className="card-body d-flex flex-column">
-                <h5>{c.titulo}</h5>
-                <p className="fw-bold">${c.precio}</p>
+                <h5 className="text-center">{c.titulo}</h5>
+                <p className="fw-bold text-center fs-5 text-rosa">${c.precio} USD</p>
+
+                <div className="row  gy-3">
+                  <div className="col-6 ">
+                    
+                    <div className="rounded bg-dark text-white text-center p-3">
+                      <p className="mb-0"> {c.banos} Baños</p>
+                    </div>
+                  </div>
+                  <div className="col-6">
+                    <div className="rounded bg-dark text-white text-center p-3">
+                      <p className="mb-0"> {c.metrosCuadrados} M²</p>
+                    </div>
+                  </div>
+                  <div className="col-12"> 
+                    <div className="rounded  bg-dark text-white text-center p-3">
+                      <p className="mb-0"> {c.habitaciones} Habitaciones</p>
+                    </div>
+                  </div>
+                  
+                  <div className="d-flex flex-column gap-3">
+                    
+                    <div className="text-center p-3">
+                      <i class="bi bi-geo-alt-fill fs-1 text-rosa titilar"></i>
+                      <p className="titilar"> {c.ubicacion}</p>
+                    </div>
+                    
+                  </div>
+                  
+                </div>
 
                 <p>
                   {c.descripcion?.slice(0, 100)}
                   {c.descripcion?.length > 100 && "..."}
                 </p>
 
-                <ul className="list-unstyled small mb-3">
-                  <li>🛏 {c.habitaciones} habitaciones</li>
-                  <li>🚿 {c.banos} baños</li>
-                  <li>🏢 {c.pisos} pisos</li>
-                  <li>📐 {c.metrosCuadrados} m²</li>
-                </ul>
+                
 
-                <Link to={`/propiedad/casas/${c.id}`} className="btn btn-dark mb-2">
+                <Link to={`/propiedad/casas/${c.id}`} className="btn bg-dark text-white mb-2">
                   Ver propiedad
                 </Link>
 
