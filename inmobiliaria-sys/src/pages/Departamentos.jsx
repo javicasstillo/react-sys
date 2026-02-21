@@ -8,6 +8,7 @@ export default function Departamentos() {
   const [pagina, setPagina] = useState(1)
   const porPagina = 12
   const navigate = useNavigate()
+
   useEffect(() => {
     const fetchDepartamentos = async () => {
       const q = query(collection(db, "departamentos"), orderBy("precio", "desc"))
@@ -37,7 +38,7 @@ export default function Departamentos() {
               </div>
             </nav>
     </header>
-      <div className="container py-5">
+    <div className="container py-5">
       <h1 className="text-bebas tamano2 text-center">Departamentos</h1>
 
       <div className="row">
@@ -109,7 +110,7 @@ export default function Departamentos() {
         </div>
       )}
     </div>
-          <footer className="bg-rosa">
+    <footer className="bg-rosa">
         <div className="container py-3">
           <div className="row justify-content-between">
             <article className="col-12 col-md-6 text-center" onClick={() => navigate(-1)}>
@@ -133,7 +134,7 @@ export default function Departamentos() {
           &copy; Inmobiliaria SyS | Desarrollado por{" "}
           <a href="https://genesys.com.ar/" className="link-dark link-underline-opacity-0">Genesys</a>
         </p>
-      </footer>
+    </footer>
     </>
     
   )

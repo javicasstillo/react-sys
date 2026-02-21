@@ -148,7 +148,7 @@ export default function Admin() {
       {tipo && (
         <>
           <button className="btn btn-outline-secondary mb-3" onClick={() => setTipo("")}>
-            Cambiar tipo
+            ← Volver
           </button>
 
           <form onSubmit={crearPropiedad} className="card p-4 mb-5">

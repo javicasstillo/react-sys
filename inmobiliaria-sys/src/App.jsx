@@ -37,7 +37,7 @@ function Home() {
   return (
     <>
       <header>
-        <nav className="navbar navbar-expand-lg bg-rosa fixed-top">
+        <nav className="navbar navbar-expand-lg bg-rosa  fixed-top">
           <div className="container">
             <Link to="/" className="navbar-brand" onClick={() => scrollTo("banner")}>
               <img src="/assets/logo.png" alt="logo" className="logo" />
@@ -397,6 +397,21 @@ function Login() {
   };
 
   return (
+    <>
+    <header>
+            <nav className="navbar  bg-rosa fixed-top py-3">
+              <div className="container d-flex justify-content-between">
+                <img src="/assets/logo.png" alt="logo" className="logo cursor" onClick={() => navigate(-1)}/>
+                <button 
+                  className="btn btn-outline-light bg-rosa text-white fs-5"
+                  onClick={() => navigate(-1)}
+                >
+                  ← Volver
+                </button>
+                  
+              </div>
+            </nav>
+    </header>
     <main>
       <section id="login" className="portada2 d-flex align-items-center">
         <div className="container">
@@ -428,6 +443,7 @@ function Login() {
         </div>
       </section>
     </main>
+    </>
   );
 }
 
