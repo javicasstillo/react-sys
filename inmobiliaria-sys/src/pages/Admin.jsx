@@ -153,7 +153,7 @@ export default function Admin() {
             ))}
           </div>
           <div className="col-12 col-md-6">
-            <a href="#" className="link-underline-opacity-0 link-light"><div className="rounded bg-dark h-100 d-flex flex-column align-items-center justify-content-center">
+            <a href="https://analytics.google.com/analytics/web/?utm_campaign=2024-q2-hc-ga&utm_source=xsmb&utm_medium=ipp-art1&utm_content=ga-create-account&utm_term=hc-ga-ipp-v1#/a384683662p524816742/reports/intelligenthome?params=_u..nav%3Dmaui" className="link-underline-opacity-0 link-light"><div className="rounded bg-dark h-100 d-flex flex-column align-items-center justify-content-center">
               <i class="bi bi-clipboard-data-fill text-white fs-1"></i>
               <h5 className="fs-3 text-bebas text-white mb-0">Dashboard</h5>
             </div></a>
