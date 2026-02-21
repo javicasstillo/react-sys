@@ -131,8 +131,16 @@ export default function Admin() {
   }
 
   return (
+    <>
+    <header>
+            <nav className="navbar bg-dark fixed-top">
+              <div className="container d-flex align-items-center justify-content-center">
+                <img src="/assets/logo.png" alt="logo" className="logo"/>
+              </div>
+            </nav>
+          </header>
     <div className="container py-5">
-      <h1 className="text-center">Panel de Administrador</h1>
+      <h5 className="mb-0 fs-1 text-center text-bebas">Panel de Administracion</h5>
       <p className="text-center">¿Qué querés gestionar?</p>
       {!tipo && (
         <div className="row justify-content-center">
@@ -143,6 +151,12 @@ export default function Admin() {
                 {t.toUpperCase()}
               </button>
             ))}
+          </div>
+          <div className="col-12 col-md-6">
+            <a href="#" className="link-underline-opacity-0 link-light"><div className="rounded bg-dark h-100 d-flex flex-column align-items-center justify-content-center">
+              <i class="bi bi-clipboard-data-fill text-white fs-1"></i>
+              <h5 className="fs-3 text-bebas text-white mb-0">Dashboard</h5>
+            </div></a>
           </div>
         </div>
       )}
@@ -213,5 +227,6 @@ export default function Admin() {
         </>
       )}
     </div>
+    </>
   )
 }
