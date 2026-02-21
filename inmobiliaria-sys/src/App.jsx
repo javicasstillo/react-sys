@@ -370,10 +370,10 @@ function Home() {
             <article className="col-12 col-md-3 text-center text-md-start pt-4">
               <h6 className="text-white">Navegación</h6>
               <ul className="list-unstyled">
-                <li><button className="btn btn-link text-white" onClick={() => scrollTo("banner")}>Inicio</button></li>
-                <li><button className="btn btn-link text-white" onClick={() => scrollTo("menu-propiedades")}>Propiedades</button></li>
-                <li><button className="btn btn-link text-white" onClick={() => scrollTo("servicios")}>Servicios</button></li>
-                <li><button className="btn btn-link text-white" onClick={() => scrollTo("nosotros")}>Nosotros</button></li>
+                <li><button className="btn text-white" onClick={() => scrollTo("banner")}>Inicio</button></li>
+                <li><button className="btn text-white" onClick={() => scrollTo("menu-propiedades")}>Propiedades</button></li>
+                <li><button className="btn text-white" onClick={() => scrollTo("servicios")}>Servicios</button></li>
+                <li><button className="btn text-white" onClick={() => scrollTo("nosotros")}>Nosotros</button></li>
               </ul>
             </article>
           </div>

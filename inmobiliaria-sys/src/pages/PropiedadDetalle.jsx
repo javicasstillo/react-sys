@@ -44,39 +44,57 @@ export default function PropiedadDetalle() {
       
 
       {/* CARROUSEL EXACTO AL MODAL */}
-      <div id="carouselPropiedad" className="carousel slide mb-4">
-        <div className="carousel-inner">
-          {propiedad.imagenes?.map((img, i) => (
-            <div key={i} className={`carousel-item ${i === 0 ? "active" : ""}`}>
-              <img
-                src={img}
-                className="d-block w-100"
-                style={{ maxHeight: 450, objectFit: "cover" }}
-              />
-            </div>
-          ))}
+{/* CARROUSEL CON ALTURA FIJA Y ESTILOS EN CSS */}
+<div id="carouselPropiedad" className="carousel slide mb-4 carousel-propiedad">
+  <div className="carousel-inner">
+
+    {propiedad.imagenes?.map((img, i) => (
+      <div
+        key={i}
+        className={`carousel-item ${i === 0 ? "active" : ""}`}
+      >
+        <div className="carousel-propiedad-item">
+          <img
+            src={img}
+            alt={`Propiedad ${i + 1}`}
+            className="carousel-propiedad-img"
+          />
         </div>
-
-        <button className="carousel-control-prev" type="button" data-bs-target="#carouselPropiedad" data-bs-slide="prev">
-          <span className="carousel-control-prev-icon" style={{ filter: "invert(1)" }}></span>
-        </button>
-
-        <button className="carousel-control-next" type="button" data-bs-target="#carouselPropiedad" data-bs-slide="next">
-          <span className="carousel-control-next-icon" style={{ filter: "invert(1)" }}></span>
-        </button>
       </div>
+    ))}
+
+  </div>
+
+  <button
+    className="carousel-control-prev"
+    type="button"
+    data-bs-target="#carouselPropiedad"
+    data-bs-slide="prev"
+  >
+    <span className="carousel-control-prev-icon carousel-propiedad-arrow"></span>
+  </button>
+
+  <button
+    className="carousel-control-next"
+    type="button"
+    data-bs-target="#carouselPropiedad"
+    data-bs-slide="next"
+  >
+    <span className="carousel-control-next-icon carousel-propiedad-arrow"></span>
+  </button>
+</div>
       <div className="row gy-3">
         <div className="col-6 col-md-4">
-          <p className="p-3  text-white bg-rosa text-center rounded h-100">{propiedad.banos} Baños </p>
+          <p className="p-3   bg-body-secondary  text-center rounded h-100">{propiedad.banos} Baños </p>
         </div>
         <div className="col-6 col-md-4">
-          <p className="p-3  text-white bg-rosa  text-center rounded h-100"> {propiedad.habitaciones} Habitaciones</p>
+          <p className="p-3   bg-body-secondary   text-center rounded h-100"> {propiedad.habitaciones} Habitaciones</p>
         </div>
         <div className="col-6 col-md-4">
-          <p className="p-3  text-white bg-rosa  text-center rounded h-100"> {propiedad.metrosCuadrados} M²</p>
+          <p className="p-3   bg-body-secondary   text-center rounded h-100"> {propiedad.metrosCuadrados} M²</p>
         </div>
         <div className="col-6 col-md-12">
-          <p className="p-3  text-white bg-rosa  text-center rounded h-100"> <i class="bi bi-geo-alt-fill fs-5"></i> {propiedad.ubicacion}</p>
+          <p className="p-3   bg-body-secondary   text-center rounded h-100"> <i class="bi bi-geo-alt-fill text-dark fs-5"></i> {propiedad.ubicacion}</p>
         </div>
         
       </div>
@@ -89,7 +107,7 @@ export default function PropiedadDetalle() {
       <div className="row justify-content-center">
 
         <div className="col-6 text-center">
-          <p className="rounded bg-body-secondary h-100"> <strong>Asesor Designado:</strong> {propiedad.asesor}</p>
+          <p className=" h-100"> <strong>Asesor Designado:</strong> {propiedad.asesor}</p>
         </div>
         <div className="col-6">
           <button className="rounded h-100 btn bg-rosa text-white" onClick={enviarWhatsapp}>

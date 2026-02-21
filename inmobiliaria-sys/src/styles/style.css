@@ -237,3 +237,49 @@ body {
 #login{
     min-height: 100vh;
 }
+
+/* Fondo blanco del carousel */
+.carousel-propiedad-item {
+  height: 450px;
+  background: white;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.carousel-propiedad-img {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+}
+
+/* Flechas negras reales (reemplazamos el SVG de Bootstrap) */
+.carousel-propiedad .carousel-control-prev-icon,
+.carousel-propiedad .carousel-control-next-icon {
+  background-image: none !important;
+}
+
+.carousel-propiedad .carousel-control-prev-icon::after,
+.carousel-propiedad .carousel-control-next-icon::after {
+  content: '';
+  display: block;
+  width: 1.5rem;
+  height: 1.5rem;
+  border-top: 3px solid black;
+  border-right: 3px solid black;
+  transform: rotate(-135deg);
+  margin-left: 6px;
+}
+
+.carousel-propiedad .carousel-control-next-icon::after {
+  transform: rotate(45deg);
+  margin-left: 0;
+  margin-right: 6px;
+}
+
+/* Mobile */
+@media (max-width: 768px) {
+  .carousel-propiedad-item {
+    height: 280px;
+  }
+}

@@ -71,7 +71,7 @@ export default function Admin() {
 
       const data = {
         titulo,
-        precio,
+        precio: Number(precio),
         descripcion,
         ubicacion,
         banos,
@@ -154,7 +154,14 @@ export default function Admin() {
           <form onSubmit={crearPropiedad} className="card p-4 mb-5">
 
             <input className="form-control mb-2" placeholder="Título" value={titulo} onChange={e => setTitulo(e.target.value)} required />
-            <input className="form-control mb-2" placeholder="Precio" value={precio} onChange={e => setPrecio(e.target.value)} required />
+            <input
+              type="number"
+              className="form-control mb-2"
+              placeholder="Precio"
+              value={precio}
+              onChange={e => setPrecio(Number(e.target.value))}
+              required
+            />
             <textarea className="form-control mb-2" placeholder="Descripción" rows={4} value={descripcion} onChange={e => setDescripcion(e.target.value)} required />
 
             <input className="form-control mb-2" placeholder="Ubicación" value={ubicacion} onChange={e => setUbicacion(e.target.value)} required />
