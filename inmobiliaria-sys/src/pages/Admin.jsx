@@ -132,16 +132,19 @@ export default function Admin() {
 
   return (
     <div className="container py-5">
-      <h1>Panel de Administrador</h1>
-
+      <h1 className="text-center">Panel de Administrador</h1>
+      <p className="text-center">¿Qué querés cargar?</p>
       {!tipo && (
-        <div className="mb-4">
-          <h5>¿Qué querés cargar?</h5>
-          {["casas", "departamentos", "fincas", "lotes", "locales"].map(t => (
-            <button key={t} className="btn btn-dark me-2 mb-2" onClick={() => setTipo(t)}>
-              {t.toUpperCase()}
-            </button>
+        <div className="d-flex justify-content-center py-3">
+          <div className="d-flex ">
+            
+              {["casas", "departamentos", "fincas", "lotes", "locales"].map(t => (
+              <button key={t} className="btn btn-dark me-2 mb-2" onClick={() => setTipo(t)}>
+                {t.toUpperCase()}
+              </button>
           ))}
+          </div>
+          
         </div>
       )}
 
