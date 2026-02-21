@@ -1,5 +1,5 @@
 import { Routes, Route, Link, useNavigate } from "react-router-dom";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import AOS from "aos";
 import Admin from "./pages/Admin";
 import Casas from "./pages/Casas";
@@ -10,6 +10,8 @@ import Locales from "./pages/Locales";
 import PropiedadDetalle from "./pages/PropiedadDetalle"
 import { Collapse } from "bootstrap";
 import Swal from "sweetalert2";
+import { signInWithEmailAndPassword } from "firebase/auth"
+import { auth } from "./firebase" // o la ruta correcta a tu firebase.js
 
 function scrollTo(id) {
   setTimeout(() => {
@@ -431,62 +433,128 @@ function Home() {
 }
 
 function Login() {
-  const navigate = useNavigate();
+  const navigate = useNavigate()
+  const [email, setEmail] = useState("")
+  const [password, setPassword] = useState("")
+  const [loading, setLoading] = useState(false)
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    navigate("/admin");
-  };
+  const handleSubmit = async (e) => {
+    e.preventDefault()
+
+    if (!email || !password) {
+      Swal.fire({
+        icon: "warning",
+        title: "Campos incompletos",
+        text: "Completá usuario y contraseña",
+        confirmButtonText: "Ok",
+      })
+      return
+    }
+
+    setLoading(true)
+
+    try {
+      await signInWithEmailAndPassword(auth, email, password)
+
+      Swal.fire({
+        icon: "success",
+        title: "¡Bienvenido!",
+        text: "Inicio de sesión correcto",
+        timer: 1200,
+        showConfirmButton: false,
+      })
+
+      setTimeout(() => {
+        navigate("/admin")
+      }, 1200)
+    } catch (error) {
+      console.error(error)
+
+      Swal.fire({
+        icon: "error",
+        title: "Credenciales incorrectas",
+        text: "Usuario o contraseña inválidos",
+        confirmButtonText: "Reintentar",
+      })
+    } finally {
+      setLoading(false)
+    }
+  }
 
   return (
     <>
-    <header>
-            <nav className="navbar  bg-rosa fixed-top py-3">
-              <div className="container d-flex justify-content-between">
-                <img src="/assets/logo.png" alt="logo" className="logo cursor" onClick={() => navigate(-1)}/>
-                <button 
-                  className="btn btn-outline-light bg-rosa text-white fs-5"
-                  onClick={() => navigate(-1)}
-                >
-                  ← Volver
-                </button>
-                  
-              </div>
-            </nav>
-    </header>
-    <main>
-      <section id="login" className="portada2 d-flex align-items-center">
-        <div className="container">
-          <div className="row justify-content-center">
-            <div className="col-12 col-md-6">
-              <div className="card bg-black bg-opacity-50 p-4">
-                <div className="d-flex flex-column align-items-center">
-                  <img src="/assets/logo.png" className="w-25 mb-3" />
+      <header>
+        <nav className="navbar bg-rosa fixed-top py-3">
+          <div className="container d-flex justify-content-between">
+            <img
+              src="/assets/logo.png"
+              alt="logo"
+              className="logo cursor"
+              onClick={() => navigate(-1)}
+            />
+            <button
+              className="btn btn-outline-light bg-rosa text-white fs-5"
+              onClick={() => navigate(-1)}
+              type="button"
+            >
+              ← Volver
+            </button>
+          </div>
+        </nav>
+      </header>
 
-                  <form onSubmit={handleSubmit} className="w-100">
-                    <div className="mb-3">
-                      <label className="form-label text-rosa">Usuario</label>
-                      <input type="email" className="form-control" />
-                    </div>
+      <main>
+        <section id="login" className="portada2 d-flex align-items-center">
+          <div className="container">
+            <div className="row justify-content-center">
+              <div className="col-12 col-md-6">
+                <div className="card bg-black bg-opacity-50 p-4">
+                  <div className="d-flex flex-column align-items-center">
+                    <img src="/assets/logo.png" className="w-25 mb-3" />
 
-                    <div className="mb-3">
-                      <label className="form-label text-rosa">Contraseña</label>
-                      <input type="password" className="form-control" />
-                    </div>
+                    <form onSubmit={handleSubmit} className="w-100">
+                      <div className="mb-3">
+                        <label className="form-label text-rosa">Usuario</label>
+                        <input
+                          type="email"
+                          className="form-control"
+                          value={email}
+                          onChange={(e) => setEmail(e.target.value)}
+                          required
+                        />
+                      </div>
 
-                    <div className="d-flex justify-content-end">
-                      <button className="btn bg-rosa text-white">Ingresar</button>
-                    </div>
-                  </form>
+                      <div className="mb-3">
+                        <label className="form-label text-rosa">Contraseña</label>
+                        <input
+                          type="password"
+                          className="form-control"
+                          value={password}
+                          onChange={(e) => setPassword(e.target.value)}
+                          required
+                        />
+                      </div>
+
+                      <div className="d-flex justify-content-end">
+                        <button
+                          className="btn bg-rosa text-white"
+                          disabled={loading}
+                          type="submit"
+                        >
+                          {loading ? "Ingresando..." : "Ingresar"}
+                        </button>
+                      </div>
+                    </form>
+
+                  </div>
                 </div>
               </div>
             </div>
           </div>
-        </div>
-      </section>
-    </main>
+        </section>
+      </main>
     </>
-  );
+  )
 }
 
 export default function App() {
