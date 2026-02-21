@@ -44,45 +44,45 @@ export default function PropiedadDetalle() {
       
 
       {/* CARROUSEL EXACTO AL MODAL */}
-{/* CARROUSEL CON ALTURA FIJA Y ESTILOS EN CSS */}
-<div id="carouselPropiedad" className="carousel slide mb-4 carousel-propiedad">
-  <div className="carousel-inner">
+      {/* CARROUSEL CON ALTURA FIJA Y ESTILOS EN CSS */}
+      <div id="carouselPropiedad" className="carousel slide mb-4 carousel-propiedad">
+        <div className="carousel-inner">
 
-    {propiedad.imagenes?.map((img, i) => (
-      <div
-        key={i}
-        className={`carousel-item ${i === 0 ? "active" : ""}`}
-      >
-        <div className="carousel-propiedad-item">
-          <img
-            src={img}
-            alt={`Propiedad ${i + 1}`}
-            className="carousel-propiedad-img"
-          />
+          {propiedad.imagenes?.map((img, i) => (
+            <div
+              key={i}
+              className={`carousel-item ${i === 0 ? "active" : ""}`}
+            >
+              <div className="carousel-propiedad-item">
+                <img
+                  src={img}
+                  alt={`Propiedad ${i + 1}`}
+                  className="carousel-propiedad-img"
+                />
+              </div>
+            </div>
+          ))}
+
         </div>
+
+        <button
+          className="carousel-control-prev"
+          type="button"
+          data-bs-target="#carouselPropiedad"
+          data-bs-slide="prev"
+        >
+          <span className="carousel-control-prev-icon carousel-propiedad-arrow"></span>
+        </button>
+
+        <button
+          className="carousel-control-next"
+          type="button"
+          data-bs-target="#carouselPropiedad"
+          data-bs-slide="next"
+        >
+          <span className="carousel-control-next-icon carousel-propiedad-arrow"></span>
+        </button>
       </div>
-    ))}
-
-  </div>
-
-  <button
-    className="carousel-control-prev"
-    type="button"
-    data-bs-target="#carouselPropiedad"
-    data-bs-slide="prev"
-  >
-    <span className="carousel-control-prev-icon carousel-propiedad-arrow"></span>
-  </button>
-
-  <button
-    className="carousel-control-next"
-    type="button"
-    data-bs-target="#carouselPropiedad"
-    data-bs-slide="next"
-  >
-    <span className="carousel-control-next-icon carousel-propiedad-arrow"></span>
-  </button>
-</div>
       <div className="row gy-3">
         <div className="col-6 col-md-4">
           <p className="p-3   bg-body-secondary  text-center rounded h-100">{propiedad.banos} Baños </p>

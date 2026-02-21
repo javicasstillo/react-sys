@@ -283,3 +283,7 @@ body {
     height: 280px;
   }
 }
+
+.cursor{
+    cursor: pointer;
+}

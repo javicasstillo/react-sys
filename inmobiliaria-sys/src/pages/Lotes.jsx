@@ -1,12 +1,13 @@
 import { useEffect, useState } from "react"
 import { collection, getDocs, query, orderBy } from "firebase/firestore"
 import { db } from "../firebase"
-import { Link } from "react-router-dom"
+import { Link, useNavigate } from "react-router-dom"
 
 export default function Lotes() {
   const [lotes, setLotes] = useState([])
   const [pagina, setPagina] = useState(1)
   const porPagina = 12
+  const navigate = useNavigate()
 
   useEffect(() => {
     const fetchLotes = async () => {
@@ -22,6 +23,21 @@ export default function Lotes() {
   const visibles = lotes.slice(inicio, inicio + porPagina)
 
   return (
+    <>
+    <header>
+            <nav className="navbar  bg-rosa fixed-top">
+              <div className="container d-flex justify-content-between">
+                <img src="/assets/logo.png" alt="logo" className="logo cursor" onClick={() => navigate(-1)}/>
+                <button 
+                  className="btn btn-outline-light bg-rosa text-white fs-5"
+                  onClick={() => navigate(-1)}
+                >
+                  ← Volver
+                </button>
+                  
+              </div>
+            </nav>
+    </header>
     <div className="container py-5">
       <h1 className="text-bebas tamano2 text-center">Lotes</h1>
 
@@ -84,5 +100,31 @@ export default function Lotes() {
         </div>
       )}
     </div>
+    <footer className="bg-rosa">
+        <div className="container py-3">
+          <div className="row justify-content-between">
+            <article className="col-12 col-md-6 text-center" onClick={() => navigate(-1)}>
+              <button className="bg-transparent border-0">
+                <img src="/assets/logo.png" alt="logo footer" className="w-50 logo" />
+              </button>
+            </article>
+
+            <article className="col-12 col-md-3 text-center text-md-start pt-4">
+              <h6 className="text-white">Contacto</h6>
+              <ul className="list-unstyled text-white">
+                <li>Las Heras 181 - San Rafael</li>
+                <li>+54 9 260-4345281</li>
+                <li>sysemprendimientos06@gmail.com</li>
+              </ul>
+            </article>
+          </div>
+        </div>
+
+        <p className="mb-0 py-3 text-center text-white">
+          &copy; Inmobiliaria SyS | Desarrollado por{" "}
+          <a href="https://genesys.com.ar/" className="link-dark link-underline-opacity-0">Genesys</a>
+        </p>
+    </footer>
+    </>
   )
 }
