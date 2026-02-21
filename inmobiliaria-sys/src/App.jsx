@@ -9,6 +9,7 @@ import Lotes from "./pages/Lotes";
 import Locales from "./pages/Locales";
 import PropiedadDetalle from "./pages/PropiedadDetalle"
 import { Collapse } from "bootstrap";
+import Swal from "sweetalert2";
 
 function scrollTo(id) {
   setTimeout(() => {
@@ -16,7 +17,6 @@ function scrollTo(id) {
     if (el) el.scrollIntoView({ behavior: "smooth" });
   }, 100);
 }
-
 
 
 function cerrarMenu() {
@@ -33,6 +33,42 @@ function Home() {
   useEffect(() => {
     AOS.init({ once: true });
   }, []);
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    const form = e.target;
+    const data = new FormData(form);
+
+    try {
+      const res = await fetch("https://formsubmit.co/ajax/javiercastillo.tuc@gmail.com", {
+        method: "POST",
+        body: data,
+        headers: { Accept: "application/json" },
+      });
+
+      if (res.ok) {
+        form.reset();
+        Swal.fire({
+          icon: "success",
+          title: "¡Mensaje enviado!",
+          text: "Gracias por escribirnos. Te respondemos a la brevedad 🙌",
+          confirmButtonText: "Genial",
+        });
+      } else {
+        throw new Error("Error al enviar");
+      }
+    } catch (err) {
+      Swal.fire({
+        icon: "error",
+        title: "Ups 😕",
+        text: "No se pudo enviar el mensaje. Probá de nuevo en unos minutos.",
+        confirmButtonText: "Reintentar",
+      });
+    }
+  };
+
+
 
   return (
     <>
@@ -166,27 +202,33 @@ function Home() {
                       ¡Contactanos para recibir la mejor oferta del mercado!
                     </p>
 
-                    <form>
+                    <form onSubmit={handleSubmit}>
                       <div className="row g-3 mb-3">
                         <div className="col-12 col-md-6">
                           <label className="form-label text-rosa">Nombre *</label>
-                          <input type="text" className="form-control" />
+                          <input type="text" className="form-control" name="nombre" required />
                         </div>
+
                         <div className="col-12 col-md-6">
                           <label className="form-label text-rosa">Apellido *</label>
-                          <input type="text" className="form-control" />
+                          <input type="text" className="form-control" name="apellido" required />
                         </div>
                       </div>
 
                       <div className="mb-3">
                         <label className="form-label text-rosa">Email *</label>
-                        <input type="email" className="form-control" />
+                        <input type="email" className="form-control" name="email" required />
                       </div>
 
                       <div className="mb-4">
                         <label className="form-label text-rosa">Mensaje *</label>
-                        <textarea className="form-control" rows="4" placeholder="Escribe aquí..."></textarea>
+                        <textarea className="form-control" rows="4" name="mensaje" required />
                       </div>
+
+                      {/* Config FormSubmit */}
+                      <input type="hidden" name="_captcha" value="false" />
+                      <input type="hidden" name="_subject" value="Nueva consulta" />
+                      <input type="hidden" name="_template" value="table" />
 
                       <div className="text-center text-md-end">
                         <button type="submit" className="btn text-white bg-rosa px-4">
