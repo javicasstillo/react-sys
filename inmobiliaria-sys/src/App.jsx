@@ -1,4 +1,4 @@
-import { Routes, Route, Link, useNavigate } from "react-router-dom";
+import { HashRouter, Routes, Route, Link, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import AOS from "aos";
 import Admin from "./pages/Admin";
