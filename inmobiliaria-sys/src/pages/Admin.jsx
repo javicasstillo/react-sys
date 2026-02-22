@@ -104,10 +104,29 @@ export default function Admin() {
     }
   }
 
-  const eliminar = async id => {
+  const eliminar = async (id) => {
+  const result = await Swal.fire({
+    title: "¿Estás seguro?",
+    text: "¿Estás seguro que deseas eliminar esta propiedad?",
+    icon: "warning",
+    showCancelButton: true,
+    confirmButtonText: "Sí, eliminar",
+    cancelButtonText: "Cancelar",
+    reverseButtons: true,
+  })
+
+  if (!result.isConfirmed) return
+
+  try {
     await deleteDoc(doc(db, tipo, id))
     setItems(items.filter(i => i.id !== id))
+
+    Swal.fire("Eliminado", "La propiedad fue eliminada correctamente", "success")
+  } catch (error) {
+    console.error(error)
+    Swal.fire("Error", "No se pudo eliminar la propiedad", "error")
   }
+}
 
   const handleEdit = item => {
     setEditando(item)
