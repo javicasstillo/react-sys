@@ -11,7 +11,8 @@ import PropiedadDetalle from "./pages/PropiedadDetalle"
 import { Collapse } from "bootstrap";
 import Swal from "sweetalert2";
 import { signInWithEmailAndPassword } from "firebase/auth"
-import { auth } from "./firebase" // o la ruta correcta a tu firebase.js
+import { auth } from "./firebase" 
+import PrivateRoute from "./components/PrivateRoute";
 
 function scrollTo(id) {
   setTimeout(() => {
@@ -562,7 +563,14 @@ export default function App() {
     <Routes>
       <Route path="/" element={<Home />} />
       <Route path="/login" element={<Login />} />
-      <Route path="/admin" element={<Admin />} />
+      <Route
+        path="/admin"
+        element={
+          <PrivateRoute>
+            <Admin />
+          </PrivateRoute>
+        }
+      />
       <Route path="/casas" element={<Casas />} />
       <Route path="/departamentos" element={<Departamentos />} />
       <Route path="/locales" element={<Locales />} />
