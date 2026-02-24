@@ -131,7 +131,7 @@ export default function Locales() {
               <ul className="list-unstyled text-white">
                 <li>Las Heras 181 - San Rafael</li>
                 <li>+54 9 260-4345281</li>
-                <li>sysemprendimientos06@gmail.com</li>
+                <li>consultas.inmobiliariasys@gmail.com</li>
               </ul>
             </article>
           </div>
