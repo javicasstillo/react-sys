@@ -50,12 +50,16 @@ export default function Locales() {
           {localesPaginados.map(l => (
             <div key={l.id} className="col-md-4 mb-4">
               <div className="card h-100">
+                <div className="alturagpt skeleton">
                 <img
                   src={l.imagenes?.[0]}
+                  loading="lazy"
                   alt={l.titulo}
                   className="card-img-top"
                   style={{ height: 200, objectFit: "cover" }}
+                  onLoad={(e) => e.currentTarget.parentElement.classList.remove("skeleton")}
                 />
+              </div>
 
                 <div className="card-body d-flex flex-column">
                   <h5 className="text-center">{l.titulo}</h5>
@@ -81,7 +85,7 @@ export default function Locales() {
                     {l.descripcion?.length > 100 && "..."}
                   </p>
 
-                  <Link to={`/propiedad/locales/${l.id}`} className="btn bg-dark text-white mb-2">
+                  <Link to={`/propiedad/locales/${l.id}`} className="btn bg-dark text-white mb-2 mt-auto" >
                     Ver propiedad
                   </Link>
                 </div>

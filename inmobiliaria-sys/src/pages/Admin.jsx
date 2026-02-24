@@ -233,11 +233,26 @@ export default function Admin() {
               <div key={item.id} className="col-md-4 mb-3">
                 <div className="card h-100">
                   <img src={item.imagenes?.[0]} className="card-img-top" style={{ height: 180, objectFit: "cover" }} />
-                  <div className="card-body">
+                  <div className="card-body d-flex flex-column">
                     <h5>{item.titulo}</h5>
+                    <p className="text-rosa">{item.precio} USD</p>
                     <p>{item.descripcion?.slice(0, 100)}...</p>
-                    <button className="btn btn-sm btn-outline-dark me-2" onClick={() => handleEdit(item)}>Editar</button>
-                    <button className="btn btn-sm btn-outline-danger" onClick={() => eliminar(item.id)}>Eliminar</button>
+
+                    <div className="mt-auto d-flex gap-2">
+                      <button
+                        className="btn btn-sm btn-outline-dark"
+                        onClick={() => handleEdit(item)}
+                      >
+                        Editar
+                      </button>
+
+                      <button
+                        className="btn btn-sm btn-outline-danger"
+                        onClick={() => eliminar(item.id)}
+                      >
+                        Eliminar
+                      </button>
+                    </div>
                   </div>
                 </div>
               </div>

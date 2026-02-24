@@ -44,7 +44,7 @@ function Home() {
     const data = new FormData(form);
 
     try {
-      const res = await fetch("https://formsubmit.co/ajax/javiercastillo.tuc@gmail.com", {
+      const res = await fetch("https://formsubmit.co/ajax/consultas.inmobiliariasys@gmail.com", {
         method: "POST",
         body: data,
         headers: { Accept: "application/json" },
@@ -314,12 +314,12 @@ function Home() {
               Nosotros
             </h3>
 
-            <div className="row justify-content-center align-items-center">
+            <div className="row justify-content-center align-items-center gy-3">
               <div className="col-12 col-md-6" data-aos="fade-up">
                 <img src="/assets/oficina" alt="imagen" className="w-100" />
               </div>
 
-                            <div className="col-12 col-md-6 py-3" data-aos="fade-up">
+              <div className="col-12 col-md-6 py-3" data-aos="fade-up">
                 <p>
                   Nuestra historia comienza en el año 2003, cuando dos amigos apasionados
                   por el mundo inmobiliario, Carlos Sacon y Fabricio Signes, decidieron
@@ -388,6 +388,201 @@ function Home() {
                 </div>
 
               </div>
+
+            <div className="container my-4">
+
+              {/* BOTÓN */}
+              <div className="text-center mb-3">
+                <button
+                  id="btnEquipo"
+                  className="btn bg-rosa text-white px-4 py-2 fw-bold"
+                  type="button"
+                  data-bs-toggle="collapse"
+                  data-bs-target="#equipoCollapse"
+                  aria-expanded="false"
+                  aria-controls="equipoCollapse"
+                  onClick={(e) => {
+                    e.currentTarget.disabled = true
+                    e.currentTarget.innerText = "Equipo Cargado"
+                  }}
+                >
+                  Conocé a nuestro equipo
+                </button>
+              </div>
+
+              {/* DESPLEGABLE */}
+              <div className="collapse" id="equipoCollapse">
+                <div className="row justify-content-center align-items-center gy-3">
+
+                  {/* Leonel */}
+                  <div className="col-6 col-md-2" data-aos="fade-up">
+                    <div className="rounded py-3 h-100 bg-body-secondary d-flex flex-column">
+                      <div className="d-flex flex-column align-items-center justify-content-between gap-3 h-100">
+
+                        <div className="d-flex justify-content-center" style={{ height: 120 }}>
+                          <img
+                            src="/assets/Leonel.jpg"
+                            alt="Leonel Bernardeau"
+                            className="w-100 h-100 rounded object-fit-cover"
+                            style={{ maxWidth: 120 }}
+                            loading="lazy"
+                          />
+                        </div>
+
+                        <div className="d-flex flex-column justify-content-center text-center">
+                          <h3 className="text-bebas mb-0">Leonel Bernardeau</h3>
+                          <p className="mb-2">Asesor de ventas</p>
+                        </div>
+
+                        <a
+                          href="https://api.whatsapp.com/send?phone=2604594195&text=¡Hola Leonel👋! Estuve viendo su pagina web y necesito hacer la siguiente consulta: "
+                          className="link-underline-opacity-0 link-light mt-auto d-flex"
+                        >
+                          <button className="btn bg-rosa text-white w-100">
+                            <i className="bi bi-whatsapp"></i> Enviar Whatsapp
+                          </button>
+                        </a>
+
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Nahuel */}
+                  <div className="col-6 col-md-2" data-aos="fade-up">
+                    <div className="rounded py-3 h-100 bg-body-secondary d-flex flex-column">
+                      <div className="d-flex flex-column align-items-center justify-content-between gap-3 h-100">
+
+                        <div className="d-flex justify-content-center" style={{ height: 120 }}>
+                          <img
+                            src="/assets/Nahuel.jpg"
+                            alt="Nahuel Barroso"
+                            className="w-100 h-100 rounded object-fit-cover"
+                            style={{ maxWidth: 120 }}
+                            loading="lazy"
+                          />
+                        </div>
+
+                        <div className="d-flex flex-column justify-content-center text-center">
+                          <h3 className="text-bebas mb-0">Nahuel Barroso</h3>
+                          <p className="mb-2">Asesor de ventas</p>
+                        </div>
+
+                        <a
+                          href="https://api.whatsapp.com/send?phone=2604222764&text=¡Hola Nahuel👋! Estuve viendo su pagina web y necesito hacer la siguiente consulta: "
+                          className="link-underline-opacity-0 link-light mt-auto d-flex"
+                        >
+                          <button className="btn bg-rosa text-white w-100">
+                            <i className="bi bi-whatsapp"></i> Enviar Whatsapp
+                          </button>
+                        </a>
+
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Alfredo */}
+                  <div className="col-6 col-md-2" data-aos="fade-up">
+                    <div className="rounded py-3 h-100 bg-body-secondary d-flex flex-column">
+                      <div className="d-flex flex-column align-items-center justify-content-between gap-3 h-100">
+
+                        <div className="d-flex justify-content-center" style={{ height: 120 }}>
+                          <img
+                            src="/assets/Alfredo.jpg"
+                            alt="Alfredo Signes"
+                            className="w-100 h-100 rounded object-fit-cover"
+                            style={{ maxWidth: 120 }}
+                            loading="lazy"
+                          />
+                        </div>
+
+                        <div className="d-flex flex-column justify-content-center text-center">
+                          <h3 className="text-bebas mb-0">Alfredo Signes</h3>
+                          <p className="mb-2">Administración</p>
+                        </div>
+
+                        <a
+                          href="https://api.whatsapp.com/send?phone=2604387319&text=¡Hola Alfredo👋! Estuve viendo su pagina web y necesito hacer la siguiente consulta: "
+                          className="link-underline-opacity-0 link-light mt-auto d-flex"
+                        >
+                          <button className="btn bg-rosa text-white w-100">
+                            <i className="bi bi-whatsapp"></i> Enviar Whatsapp
+                          </button>
+                        </a>
+
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Rodolfo */}
+                  <div className="col-6 col-md-2" data-aos="fade-up">
+                    <div className="rounded py-3 h-100 bg-body-secondary d-flex flex-column">
+                      <div className="d-flex flex-column align-items-center justify-content-between gap-3 h-100">
+
+                        <div className="d-flex justify-content-center" style={{ height: 120 }}>
+                          <img
+                            src="/assets/Rodolfo.jpg"
+                            alt="Rodolfo Andrade"
+                            className="w-100 h-100 rounded object-fit-cover"
+                            style={{ maxWidth: 120 }}
+                            loading="lazy"
+                          />
+                        </div>
+
+                        <div className="d-flex flex-column justify-content-center text-center">
+                          <h3 className="text-bebas mb-0">Rodolfo Andrade</h3>
+                          <p className="mb-2">Asesor de ventas</p>
+                        </div>
+
+                        <a
+                          href="https://api.whatsapp.com/send?phone=2604331325&text=¡Hola Rodolfo👋! Estuve viendo su pagina web y necesito hacer la siguiente consulta: "
+                          className="link-underline-opacity-0 link-light mt-auto d-flex"
+                        >
+                          <button className="btn bg-rosa text-white w-100">
+                            <i className="bi bi-whatsapp"></i> Enviar Whatsapp
+                          </button>
+                        </a>
+
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Silvia */}
+                  <div className="col-6 col-md-2" data-aos="fade-up">
+                    <div className="rounded py-3 h-100 bg-body-secondary d-flex flex-column">
+                      <div className="d-flex flex-column align-items-center justify-content-between gap-3 h-100">
+
+                        <div className="d-flex justify-content-center" style={{ height: 120 }}>
+                          <img
+                            src="/assets/Silvina.jpg"
+                            alt="Silvia Diaz"
+                            className="w-100 h-100 rounded object-fit-cover"
+                            style={{ maxWidth: 120 }}
+                            loading="lazy"
+                          />
+                        </div>
+
+                        <div className="d-flex flex-column justify-content-center text-center">
+                          <h3 className="text-bebas mb-0">Silvia Diaz</h3>
+                          <p className="mb-2">Asesora de ventas</p>
+                        </div>
+
+                        <a
+                          href="https://api.whatsapp.com/send?phone=2604051517&text=¡Hola Silvia👋! Estuve viendo su pagina web y necesito hacer la siguiente consulta: "
+                          className="link-underline-opacity-0 link-light mt-auto d-flex"
+                        >
+                          <button className="btn bg-rosa text-white w-100">
+                            <i className="bi bi-whatsapp"></i> Enviar Whatsapp
+                          </button>
+                        </a>
+
+                      </div>
+                    </div>
+                  </div>
+
+                </div>
+              </div>
+            </div>
+             
             </div>
           </div>
         </section>

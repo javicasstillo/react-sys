@@ -47,7 +47,16 @@ export default function Departamentos() {
           {departamentosPaginados.map(d => (
             <div key={d.id} className="col-md-4 mb-4">
               <div className="card h-100">
-                <img src={d.imagenes?.[0]} alt={d.titulo} className="card-img-top" style={{ height: 200, objectFit: "cover" }} />
+                <div className="alturagpt skeleton">
+                  <img
+                    src={d.imagenes?.[0]}
+                    loading="lazy"
+                    alt={d.titulo}
+                    className="card-img-top"
+                    style={{ height: 200, objectFit: "cover" }}
+                    onLoad={(e) => e.currentTarget.parentElement.classList.remove("skeleton")}
+                  />
+                </div>
 
                 <div className="card-body d-flex flex-column">
                   <h5 className="text-center">{d.titulo}</h5>
@@ -83,7 +92,7 @@ export default function Departamentos() {
                     {d.descripcion?.length > 100 && "..."}
                   </p>
 
-                  <Link to={`/propiedad/departamentos/${d.id}`} className="btn bg-dark text-white mb-2">
+                  <Link to={`/propiedad/departamentos/${d.id}`} className="btn bg-dark text-white mb-2 mt-auto">
                     Ver propiedad
                   </Link>
                 </div>
