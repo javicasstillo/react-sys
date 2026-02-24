@@ -404,7 +404,7 @@ function Home() {
                   onClick={(e) => {
                     e.currentTarget.disabled = true
                     e.currentTarget.innerText = "Equipo Cargado"
-                  }}
+                  }} 
                 >
                   Conocé a nuestro equipo
                 </button>
