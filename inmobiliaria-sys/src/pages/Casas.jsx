@@ -18,6 +18,13 @@ export default function Casas() {
     fetchCasas()
   }, [])
 
+  useEffect(() => {
+  window.scrollTo({
+    top: 0,
+    behavior: "smooth"
+  })
+}, [paginaActual])
+
   const totalPaginas = Math.ceil(casas.length / porPagina)
   const inicio = (paginaActual - 1) * porPagina
   const fin = inicio + porPagina

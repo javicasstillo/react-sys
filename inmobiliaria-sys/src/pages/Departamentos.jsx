@@ -5,7 +5,7 @@ import { Link, useNavigate } from "react-router-dom"
 
 export default function Departamentos() {
   const [departamentos, setDepartamentos] = useState([])
-  const [pagina, setPagina] = useState(1)
+  const [paginaActual, setPaginaActual] = useState(1)
   const porPagina = 12
   const navigate = useNavigate()
 
@@ -18,99 +18,104 @@ export default function Departamentos() {
     fetchDepartamentos()
   }, [])
 
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: "smooth" })
+  }, [paginaActual])
+
   const totalPaginas = Math.ceil(departamentos.length / porPagina)
-  const inicio = (pagina - 1) * porPagina
-  const visibles = departamentos.slice(inicio, inicio + porPagina)
+  const inicio = (paginaActual - 1) * porPagina
+  const fin = inicio + porPagina
+  const departamentosPaginados = departamentos.slice(inicio, fin)
 
   return (
     <>
-    <header>
-            <nav className="navbar  bg-rosa fixed-top">
-              <div className="container d-flex justify-content-between">
-                <img src="/assets/logo.png" alt="logo" className="logo cursor" onClick={() => navigate(-1)}/>
-                <button 
-                  className="btn btn-outline-light bg-rosa text-white fs-5"
-                  onClick={() => navigate(-1)}
-                >
-                  ← Volver
-                </button>
-                  
-              </div>
-            </nav>
-    </header>
-    <div className="container py-5">
-      <h1 className="text-bebas tamano2 text-center">Departamentos</h1>
+      <header>
+        <nav className="navbar bg-rosa fixed-top">
+          <div className="container d-flex justify-content-between">
+            <img src="/assets/logo.png" alt="logo" className="logo cursor" onClick={() => navigate(-1)} />
+            <button className="btn btn-outline-light bg-rosa text-white fs-5" onClick={() => navigate(-1)}>
+              ← Volver
+            </button>
+          </div>
+        </nav>
+      </header>
 
-      <div className="row">
-        {visibles.map(c => (
-          <div key={c.id} className="col-md-4 mb-4">
-            <div className="card h-100">
+      <div className="container py-5">
+        <h1 className="text-bebas tamano2 text-center">Departamentos</h1>
 
-              <img
-                src={c.imagenes?.[0]}
-                alt={c.titulo}
-                className="card-img-top"
-                style={{ height: 200, objectFit: "cover" }}
-              />
+        <div className="row">
+          {departamentosPaginados.map(d => (
+            <div key={d.id} className="col-md-4 mb-4">
+              <div className="card h-100">
+                <img src={d.imagenes?.[0]} alt={d.titulo} className="card-img-top" style={{ height: 200, objectFit: "cover" }} />
 
-              <div className="card-body d-flex flex-column">
-                <h5 className="text-center">{c.titulo}</h5>
-                <p className="fw-bold text-center fs-5 text-rosa">${c.precio} USD</p>
+                <div className="card-body d-flex flex-column">
+                  <h5 className="text-center">{d.titulo}</h5>
+                  <p className="fw-bold text-center fs-5 text-rosa">${d.precio} USD</p>
 
-                <div className="row gy-3">
-                  <div className="col-6">
-                    <div className="rounded bg-body-secondary text-center p-3">
-                      <p className="mb-0">{c.banos} Baños</p>
+                  <div className="row gy-3">
+                    <div className="col-6">
+                      <div className="rounded bg-body-secondary text-center p-3">
+                        <p className="mb-0">{d.banos} Baños</p>
+                      </div>
+                    </div>
+                    <div className="col-6">
+                      <div className="rounded bg-body-secondary text-center p-3">
+                        <p className="mb-0">{d.metrosCuadrados} M²</p>
+                      </div>
+                    </div>
+                    <div className="col-12">
+                      <div className="rounded bg-body-secondary text-center p-3">
+                        <p className="mb-0">{d.habitaciones} Habitaciones</p>
+                      </div>
+                    </div>
+
+                    <div className="d-flex flex-column gap-3">
+                      <div className="text-center p-3">
+                        <i className="bi bi-geo-alt-fill fs-1 text-rosa titilar"></i>
+                        <p className="titilar">{d.ubicacion}</p>
+                      </div>
                     </div>
                   </div>
-                  <div className="col-6">
-                    <div className="rounded bg-body-secondary text-center p-3">
-                      <p className="mb-0">{c.metrosCuadrados} M²</p>
-                    </div>
-                  </div>
-                  <div className="col-12">
-                    <div className="rounded bg-body-secondary text-center p-3">
-                      <p className="mb-0">{c.habitaciones} Habitaciones</p>
-                    </div>
-                  </div>
 
-                  <div className="d-flex flex-column gap-3">
-                    <div className="text-center p-3">
-                      <i className="bi bi-geo-alt-fill fs-1 text-rosa titilar"></i>
-                      <p className="titilar">{c.ubicacion}</p>
-                    </div>
-                  </div>
+                  <p>
+                    {d.descripcion?.slice(0, 100)}
+                    {d.descripcion?.length > 100 && "..."}
+                  </p>
+
+                  <Link to={`/propiedad/departamentos/${d.id}`} className="btn bg-dark text-white mb-2">
+                    Ver propiedad
+                  </Link>
                 </div>
-
-                <p>
-                  {c.descripcion?.slice(0, 100)}
-                  {c.descripcion?.length > 100 && "..."}
-                </p>
-
-                <Link to={`/propiedad/departamentos/${c.id}`} className="btn bg-dark text-white mb-2">
-                  Ver propiedad
-                </Link>
               </div>
             </div>
-          </div>
-        ))}
-      </div>
-
-      {totalPaginas > 1 && (
-        <div className="d-flex justify-content-center gap-2 mt-4">
-          {Array.from({ length: totalPaginas }).map((_, i) => (
-            <button
-              key={i}
-              className={`btn ${pagina === i + 1 ? "btn-dark" : "btn-outline-dark"}`}
-              onClick={() => setPagina(i + 1)}
-            >
-              {i + 1}
-            </button>
           ))}
         </div>
-      )}
-    </div>
-    <footer className="bg-rosa">
+
+        {totalPaginas > 1 && (
+          <div className="d-flex justify-content-center gap-2 mt-4">
+            <button className="btn btn-outline-dark" disabled={paginaActual === 1} onClick={() => setPaginaActual(p => p - 1)}>
+              ← Anterior
+            </button>
+
+            {[...Array(totalPaginas)].map((_, i) => (
+              <button
+                key={i}
+                className={`btn ${paginaActual === i + 1 ? "btn-dark" : "btn-outline-dark"}`}
+                onClick={() => setPaginaActual(i + 1)}
+              >
+                {i + 1}
+              </button>
+            ))}
+
+            <button className="btn btn-outline-dark" disabled={paginaActual === totalPaginas} onClick={() => setPaginaActual(p => p + 1)}>
+              Siguiente →
+            </button>
+          </div>
+        )}
+      </div>
+
+      <footer className="bg-rosa">
         <div className="container py-3">
           <div className="row justify-content-between">
             <article className="col-12 col-md-6 text-center" onClick={() => navigate(-1)}>
@@ -134,8 +139,7 @@ export default function Departamentos() {
           &copy; Inmobiliaria SyS | Desarrollado por{" "}
           <a href="https://genesys.com.ar/" className="link-dark link-underline-opacity-0">Genesys</a>
         </p>
-    </footer>
+      </footer>
     </>
-    
   )
 }

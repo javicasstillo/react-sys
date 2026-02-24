@@ -5,7 +5,7 @@ import { Link, useNavigate } from "react-router-dom"
 
 export default function Fincas() {
   const [fincas, setFincas] = useState([])
-  const [pagina, setPagina] = useState(1)
+  const [paginaActual, setPaginaActual] = useState(1)
   const porPagina = 12
   const navigate = useNavigate()
 
@@ -18,89 +18,112 @@ export default function Fincas() {
     fetchFincas()
   }, [])
 
+  useEffect(() => {
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth"
+    })
+  }, [paginaActual])
+
   const totalPaginas = Math.ceil(fincas.length / porPagina)
-  const inicio = (pagina - 1) * porPagina
-  const visibles = fincas.slice(inicio, inicio + porPagina)
+  const inicio = (paginaActual - 1) * porPagina
+  const fin = inicio + porPagina
+  const fincasPaginadas = fincas.slice(inicio, fin)
 
   return (
     <>
-    <header>
-            <nav className="navbar  bg-rosa fixed-top">
-              <div className="container d-flex justify-content-between">
-                <img src="/assets/logo.png" alt="logo" className="logo cursor" onClick={() => navigate(-1)}/>
-                <button 
-                  className="btn btn-outline-light bg-rosa text-white fs-5"
-                  onClick={() => navigate(-1)}
-                >
-                  ← Volver
-                </button>
-                  
-              </div>
-            </nav>
-    </header>
-    <div className="container py-5">
-      <h1 className="text-bebas tamano2 text-center">Fincas</h1>
+      <header>
+        <nav className="navbar bg-rosa fixed-top">
+          <div className="container d-flex justify-content-between">
+            <img src="/assets/logo.png" alt="logo" className="logo cursor" onClick={() => navigate(-1)} />
+            <button className="btn btn-outline-light bg-rosa text-white fs-5" onClick={() => navigate(-1)}>
+              ← Volver
+            </button>
+          </div>
+        </nav>
+      </header>
 
-      <div className="row">
-        {visibles.map(c => (
-          <div key={c.id} className="col-md-4 mb-4">
-            <div className="card h-100">
+      <div className="container py-5">
+        <h1 className="text-bebas tamano2 text-center">Fincas</h1>
 
-              <img
-                src={c.imagenes?.[0]}
-                alt={c.titulo}
-                className="card-img-top"
-                style={{ height: 200, objectFit: "cover" }}
-              />
+        <div className="row">
+          {fincasPaginadas.map(f => (
+            <div key={f.id} className="col-md-4 mb-4">
+              <div className="card h-100">
+                <img
+                  src={f.imagenes?.[0]}
+                  alt={f.titulo}
+                  className="card-img-top"
+                  style={{ height: 200, objectFit: "cover" }}
+                />
 
-              <div className="card-body d-flex flex-column">
-                <h5 className="text-center">{c.titulo}</h5>
-                <p className="fw-bold text-center fs-5 text-rosa">${c.precio} USD</p>
+                <div className="card-body d-flex flex-column">
+                  <h5 className="text-center">{f.titulo}</h5>
+                  <p className="fw-bold text-center fs-5 text-rosa">${f.precio} USD</p>
 
-                <div className="row gy-3">
-                  <div className="col-12">
-                    <div className="rounded bg-body-secondary text-center p-3">
-                      <p className="mb-0">{c.metrosCuadrados} M²</p>
+                  <div className="row gy-3">
+                    <div className="col-6">
+                      <div className="rounded bg-body-secondary text-center p-3">
+                        <p className="mb-0">{f.banos} Baños</p>
+                      </div>
+                    </div>
+                    <div className="col-6">
+                      <div className="rounded bg-body-secondary text-center p-3">
+                        <p className="mb-0">{f.metrosCuadrados} M²</p>
+                      </div>
+                    </div>
+                    <div className="col-12">
+                      <div className="rounded bg-body-secondary text-center p-3">
+                        <p className="mb-0">{f.habitaciones} Habitaciones</p>
+                      </div>
+                    </div>
+
+                    <div className="d-flex flex-column gap-3">
+                      <div className="text-center p-3">
+                        <i className="bi bi-geo-alt-fill fs-1 text-rosa titilar"></i>
+                        <p className="titilar">{f.ubicacion}</p>
+                      </div>
                     </div>
                   </div>
 
-                  <div className="d-flex flex-column gap-3">
-                    <div className="text-center p-3">
-                      <i className="bi bi-geo-alt-fill fs-1 text-rosa titilar"></i>
-                      <p className="titilar">{c.ubicacion}</p>
-                    </div>
-                  </div>
+                  <p>
+                    {f.descripcion?.slice(0, 100)}
+                    {f.descripcion?.length > 100 && "..."}
+                  </p>
+
+                  <Link to={`/propiedad/fincas/${f.id}`} className="btn bg-dark text-white mb-2">
+                    Ver propiedad
+                  </Link>
                 </div>
-
-                <p>
-                  {c.descripcion?.slice(0, 100)}
-                  {c.descripcion?.length > 100 && "..."}
-                </p>
-
-                <Link to={`/propiedad/fincas/${c.id}`} className="btn bg-dark text-white mb-2">
-                  Ver propiedad
-                </Link>
               </div>
             </div>
-          </div>
-        ))}
-      </div>
-
-      {totalPaginas > 1 && (
-        <div className="d-flex justify-content-center gap-2 mt-4">
-          {Array.from({ length: totalPaginas }).map((_, i) => (
-            <button
-              key={i}
-              className={`btn ${pagina === i + 1 ? "btn-dark" : "btn-outline-dark"}`}
-              onClick={() => setPagina(i + 1)}
-            >
-              {i + 1}
-            </button>
           ))}
         </div>
-      )}
-    </div>
-    <footer className="bg-rosa">
+
+        {totalPaginas > 1 && (
+          <div className="d-flex justify-content-center gap-2 mt-4">
+            <button className="btn btn-outline-dark" disabled={paginaActual === 1} onClick={() => setPaginaActual(p => p - 1)}>
+              ← Anterior
+            </button>
+
+            {[...Array(totalPaginas)].map((_, i) => (
+              <button
+                key={i}
+                className={`btn ${paginaActual === i + 1 ? "btn-dark" : "btn-outline-dark"}`}
+                onClick={() => setPaginaActual(i + 1)}
+              >
+                {i + 1}
+              </button>
+            ))}
+
+            <button className="btn btn-outline-dark" disabled={paginaActual === totalPaginas} onClick={() => setPaginaActual(p => p + 1)}>
+              Siguiente →
+            </button>
+          </div>
+        )}
+      </div>
+
+      <footer className="bg-rosa">
         <div className="container py-3">
           <div className="row justify-content-between">
             <article className="col-12 col-md-6 text-center" onClick={() => navigate(-1)}>
@@ -122,9 +145,11 @@ export default function Fincas() {
 
         <p className="mb-0 py-3 text-center text-white">
           &copy; Inmobiliaria SyS | Desarrollado por{" "}
-          <a href="https://genesys.com.ar/" className="link-dark link-underline-opacity-0">Genesys</a>
+          <a href="https://genesys.com.ar/" className="link-dark link-underline-opacity-0">
+            Genesys
+          </a>
         </p>
-    </footer>
+      </footer>
     </>
   )
 }
