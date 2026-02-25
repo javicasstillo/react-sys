@@ -172,7 +172,7 @@ function Home() {
         <section id="banner" className="portada d-flex align-items-center">
           <div className="container py-5">
             <div className="row justify-content-center align-items-center g-5">
-              <div className="col-12 col-md-6 d-flex flex-column justify-content-center align-items-center text-center text-md-start">
+              <div className="col-12 col-lg-6 d-flex flex-column justify-content-center align-items-center text-center text-md-start">
                 <div className="mt-5 d-flex justify-content-center gap-2 gap-md-3">
                   <div className="p-2 p-md-3 bg-black rounded bg-opacity-50 flex-fill">
                     <h1 className="mb-0 text-white text-bebas text-center">+10</h1>
@@ -183,7 +183,7 @@ function Home() {
                     <h3 className="text-white text-bebas text-center">Propiedades<br />Entregadas</h3>
                   </div>
                   <div className="p-2 p-md-3 bg-black rounded bg-opacity-50 flex-fill">
-                    <h1 className="mb-0 text-white text-bebas text-center">+40</h1>
+                    <h1 className="mb-0 text-white text-bebas text-center">+60</h1>
                     <h3 className="text-white text-bebas text-center">Propiedades<br />Disponibles</h3>
                   </div>
                 </div>
@@ -195,7 +195,7 @@ function Home() {
                 </p>
               </div>
 
-              <div className="col-12 col-md-6">
+              <div className="col-12 col-lg-6">
                 <div className="form">
                   <div className="card borde p-4 p-md-5 bg-black bg-opacity-50">
                     <h3 className="mb-2 text-bebas text-center tamano2 text-rosa">
@@ -315,11 +315,11 @@ function Home() {
             </h3>
 
             <div className="row justify-content-center align-items-center gy-3">
-              <div className="col-12 col-md-6" data-aos="fade-up">
+              <div className="col-12 col-lg-6" data-aos="fade-up">
                 <img src="/assets/oficina" alt="imagen" className="w-100" />
               </div>
 
-              <div className="col-12 col-md-6 py-3" data-aos="fade-up">
+              <div className="col-12 col-lg-6 py-3" data-aos="fade-up">
                 <p>
                   Nuestra historia comienza en el año 2003, cuando dos amigos apasionados
                   por el mundo inmobiliario, Carlos Sacon y Fabricio Signes, decidieron
@@ -415,7 +415,7 @@ function Home() {
                 <div className="row justify-content-center align-items-center gy-3">
 
                   {/* Leonel */}
-                  <div className="col-6 col-md-2" data-aos="fade-up">
+                  <div className="col-6 col-lg-2" data-aos="fade-up">
                     <div className="rounded py-3 h-100 bg-body-secondary d-flex flex-column">
                       <div className="d-flex flex-column align-items-center justify-content-between gap-3 h-100">
 
@@ -448,7 +448,7 @@ function Home() {
                   </div>
 
                   {/* Nahuel */}
-                  <div className="col-6 col-md-2" data-aos="fade-up">
+                  <div className="col-6 col-lg-2" data-aos="fade-up">
                     <div className="rounded py-3 h-100 bg-body-secondary d-flex flex-column">
                       <div className="d-flex flex-column align-items-center justify-content-between gap-3 h-100">
 
@@ -481,7 +481,7 @@ function Home() {
                   </div>
 
                   {/* Alfredo */}
-                  <div className="col-6 col-md-2" data-aos="fade-up">
+                  <div className="col-6 col-lg-2" data-aos="fade-up">
                     <div className="rounded py-3 h-100 bg-body-secondary d-flex flex-column">
                       <div className="d-flex flex-column align-items-center justify-content-between gap-3 h-100">
 
@@ -514,7 +514,7 @@ function Home() {
                   </div>
 
                   {/* Rodolfo */}
-                  <div className="col-6 col-md-2" data-aos="fade-up">
+                  <div className="col-6 col-lg-2" data-aos="fade-up">
                     <div className="rounded py-3 h-100 bg-body-secondary d-flex flex-column">
                       <div className="d-flex flex-column align-items-center justify-content-between gap-3 h-100">
 
@@ -547,7 +547,7 @@ function Home() {
                   </div>
 
                   {/* Silvia */}
-                  <div className="col-6 col-md-2" data-aos="fade-up">
+                  <div className="col-6 col-lg-2" data-aos="fade-up">
                     <div className="rounded py-3 h-100 bg-body-secondary d-flex flex-column">
                       <div className="d-flex flex-column align-items-center justify-content-between gap-3 h-100">
 
