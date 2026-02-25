@@ -403,7 +403,7 @@ function Home() {
                   aria-controls="equipoCollapse"
                   onClick={(e) => {
                     e.currentTarget.disabled = true
-                    e.currentTarget.innerText = "Equipo Cargado"
+                    e.currentTarget.innerText = "Nuestro Equipo"
                   }} 
                 >
                   Conocé a nuestro equipo
