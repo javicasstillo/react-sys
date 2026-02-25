@@ -1,11 +1,12 @@
 import { useEffect, useState } from "react";
-import { useParams, Link } from "react-router-dom";
+import { useParams, Link, useNavigate } from "react-router-dom";
 import { doc, getDoc } from "firebase/firestore";
 import { db } from "../firebase";
 
 export default function PropiedadDetalle() {
   const { tipo, id } = useParams();
   const [propiedad, setPropiedad] = useState(null);
+  const navigate = useNavigate()
 
   useEffect(() => {
     const fetch = async () => {
@@ -31,6 +32,8 @@ export default function PropiedadDetalle() {
   const enviarWhatsapp = () => {
     window.open(`https://wa.me/${propiedad.whatsapp}?text=${mensaje}`, "_blank");
   };
+
+  
 
   return (
 
