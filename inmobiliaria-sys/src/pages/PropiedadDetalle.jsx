@@ -33,11 +33,25 @@ export default function PropiedadDetalle() {
   };
 
   return (
+
+    <>
+    <header>
+            <nav className="navbar  bg-rosa fixed-top">
+              <div className="container d-flex justify-content-between">
+                <img src="/assets/logo.png" alt="logo" className="logo cursor" onClick={() => navigate(-1)}/>
+                <button 
+                  className="btn btn-outline-light bg-rosa text-white fs-5"
+                  onClick={() => navigate(-1)}
+                >
+                  ← Volver
+                </button>
+                  
+              </div>
+            </nav>
+          </header>
     <div className="container py-3">
 
-      <Link to={`/${tipo}`} className="btn btn-outline-secondary mb-3">
-        ← Volver
-      </Link>
+      
 
       <h1 className="mb-3 text-center">{propiedad.titulo}</h1>
       <p className="fw-bold text-center tamano2 text-rosa"> ${propiedad.precio} USD</p>
@@ -123,5 +137,33 @@ export default function PropiedadDetalle() {
       
 
     </div>
+
+    <footer className="bg-rosa">
+        <div className="container py-3">
+          <div className="row justify-content-between">
+            <article className="col-12 col-md-6 text-center" onClick={() => navigate(-1)}>
+              <button className="bg-transparent border-0">
+                <img src="/assets/logo.png" alt="logo footer" className="w-50 logo" />
+              </button>
+            </article>
+
+            <article className="col-12 col-md-3 text-center text-md-start pt-4">
+              <h6 className="text-white">Contacto</h6>
+              <ul className="list-unstyled text-white">
+                <li>Las Heras 181 - San Rafael</li>
+                <li>+54 9 260-4345281</li>
+                <li>consultas.inmobiliariasys@gmail.com</li>
+              </ul>
+            </article>
+          </div>
+        </div>
+
+        <p className="mb-0 py-3 text-center text-white">
+          &copy; Inmobiliaria SyS | Desarrollado por{" "}
+          <a href="https://genesys.com.ar/" className="link-dark link-underline-opacity-0">Genesys</a>
+        </p>
+      </footer>
+
+    </>
   );
 }
