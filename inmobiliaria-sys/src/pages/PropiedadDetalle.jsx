@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
 import { doc, getDoc } from "firebase/firestore";
 import { db } from "../firebase";
+import Swal from "sweetalert2"
 
 export default function PropiedadDetalle() {
   const { tipo, id } = useParams();
@@ -32,6 +33,41 @@ export default function PropiedadDetalle() {
   const enviarWhatsapp = () => {
     window.open(`https://wa.me/${propiedad.whatsapp}?text=${mensaje}`, "_blank");
   };
+
+  const compartirPropiedad = async () => {
+  const url = window.location.href
+
+  // 📱 Si el navegador soporta share nativo (celulares)
+  if (navigator.share) {
+    try {
+      await navigator.share({
+        title: propiedad.titulo,
+        text: "Mirá esta propiedad 👇",
+        url: url
+      })
+    } catch (err) {
+      console.log("Share cancelado")
+    }
+  }
+
+  // 💻 Si NO lo soporta (PC)
+  else {
+    try {
+      await navigator.clipboard.writeText(url)
+
+      Swal.fire({
+        icon: "success",
+        title: "¡Link copiado!",
+        text: "La propiedad está lista para ser compartida.",
+        timer: 2000,
+        showConfirmButton: false
+      })
+
+    } catch (err) {
+      Swal.fire("Error", "No se pudo copiar el link", "error")
+    }
+  }
+}
 
   
 
@@ -127,10 +163,22 @@ export default function PropiedadDetalle() {
           <p className=" h-100"> <strong>Asesor Designado:</strong> {propiedad.asesor}</p>
         </div>
         <div className="col-6 col-md-12">
-          <div className="d-flex justify-content-center">
-            <button className="rounded h-100 btn bg-rosa text-white " onClick={enviarWhatsapp}>
-              <i class="bi bi-whatsapp fs-5"></i> Enviar WhatsApp
+          <div className="d-flex justify-content-center gap-2 flex-wrap">
+
+            <button 
+              className="rounded h-100 btn bg-rosa text-white"
+              onClick={enviarWhatsapp}
+            >
+              <i className="bi bi-whatsapp fs-5"></i> Enviar WhatsApp
             </button>
+
+            <button 
+              className="rounded h-100 btn btn-outline-dark"
+              onClick={compartirPropiedad}
+            >
+              <i className="bi bi-share-fill fs-5"></i> Compartir
+            </button>
+
           </div>
         </div>
       </div>
