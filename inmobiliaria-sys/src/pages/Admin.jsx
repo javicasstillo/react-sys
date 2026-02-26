@@ -58,26 +58,31 @@ const ordenadas = snap.docs
   }
 
 const subirImagenes = async () => {
-  const urls = []
 
-  for (let i = 0; i < imagenes.length; i++) {
+  const imagenesFinales = []
 
-    const img = imagenes[i]
+  for (let i = 0; i < preview.length; i++) {
 
-    if (!(img instanceof File)) continue
+    const img = preview[i]
 
-    // 👇 ORDEN + TIMESTAMP
+    // 👇 si ya estaba en Firebase (URL)
+    if (!img.file) {
+      imagenesFinales.push(img.url)
+      continue
+    }
+
+    // 👇 si es nueva (File)
     const imgRef = ref(
       storage,
-      `propiedades/${tipo}/${Date.now()}-${i}-${img.name}`
+      `propiedades/${tipo}/${Date.now()}-${i}-${img.file.name}`
     )
 
-    await uploadBytes(imgRef, img)
+    await uploadBytes(imgRef, img.file)
     const url = await getDownloadURL(imgRef)
-    urls.push(url)
+    imagenesFinales.push(url)
   }
 
-  return urls
+  return imagenesFinales
 }
 
   const crearPropiedad = async e => {
@@ -163,31 +168,47 @@ const subirImagenes = async () => {
   }
 }
 
-  const handleEdit = item => {
-    setEditando(item)
-    setReferencia(item.referencia || "")
-    setTitulo(item.titulo)
-    setPrecio(item.precio)
-    setDescripcion(item.descripcion)
-    setUbicacion(item.ubicacion || "")
-    setBanos(item.banos)
-    setHabitaciones(item.habitaciones)
-    setMetrosCuadrados(item.metrosCuadrados)
-    setAsesor(item.asesor)
-    setWhatsapp(item.whatsapp)
-    setPreview(item.imagenes || [])
-    setImagenes([])
-  }
+const handleEdit = item => {
+  setEditando(item)
+  setReferencia(item.referencia || "")
+  setTitulo(item.titulo)
+  setPrecio(item.precio)
+  setDescripcion(item.descripcion)
+  setUbicacion(item.ubicacion || "")
+  setBanos(item.banos)
+  setHabitaciones(item.habitaciones)
+  setMetrosCuadrados(item.metrosCuadrados)
+  setAsesor(item.asesor)
+  setWhatsapp(item.whatsapp)
+
+  // 👇 las viejas se cargan como URL
+  setPreview(
+    (item.imagenes || []).map(url => ({
+      file: null,
+      url
+    }))
+  )
+}
 
   const handlePreview = (files) => {
     const arr = Array.from(files)
-    setImagenes(arr)
-    const prevs = arr.map(file => URL.createObjectURL(file))
-    setPreview(prevs)
-}
+
+    const nuevasPreview = arr.map(file => ({
+      file,
+      url: URL.createObjectURL(file)
+    }))
+
+    setPreview(prev => [...prev, ...nuevasPreview])
+  }
 
   const handleDragStart = (index) => {
   setDragIndex(index)
+}
+
+const eliminarImagen = (index) => {
+  const nuevas = [...preview]
+  nuevas.splice(index, 1)
+  setPreview(nuevas)
 }
 
 const handleDrop = (index) => {
@@ -288,10 +309,30 @@ const handleDrop = (index) => {
                   onDragStart={() => handleDragStart(i)}
                   onDragOver={(e) => e.preventDefault()}
                   onDrop={() => handleDrop(i)}
-                  style={{ cursor: "grab" }}
+                  style={{ cursor: "grab", position: "relative" }}
                 >
+
+                  {/* ❌ BOTÓN BORRAR */}
+                  <button
+                    type="button"
+                    onClick={() => eliminarImagen(i)}
+                    className="btn btn-danger btn-sm"
+                    style={{
+                      position: "absolute",
+                      top: -8,
+                      right: -8,
+                      zIndex: 10,
+                      borderRadius: "50%",
+                      width: 22,
+                      height: 22,
+                      padding: 0
+                    }}
+                  >
+                    ×
+                  </button>
+
                   <img
-                    src={p}
+                    src={p.url}
                     style={{
                       width: 80,
                       height: 80,
