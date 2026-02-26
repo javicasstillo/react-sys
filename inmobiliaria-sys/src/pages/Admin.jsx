@@ -17,22 +17,28 @@ export default function Admin() {
   const [metrosCuadrados, setMetrosCuadrados] = useState("")
   const [asesor, setAsesor] = useState("")
   const [whatsapp, setWhatsapp] = useState("")
+  const [referencia, setReferencia] = useState("")
   const [imagenes, setImagenes] = useState([])
   const [preview, setPreview] = useState([])
 
   const [loading, setLoading] = useState(false)
   const [editando, setEditando] = useState(null)
 
-  useEffect(() => {
-    if (!tipo) return
+useEffect(() => {
+  if (!tipo) return
 
-    const fetch = async () => {
-      const snap = await getDocs(collection(db, tipo))
-      setItems(snap.docs.map(d => ({ id: d.id, ...d.data() })))
-    }
+  const fetch = async () => {
+    const snap = await getDocs(collection(db, tipo))
 
-    fetch()
-  }, [tipo])
+const ordenadas = snap.docs
+  .map(d => ({ id: d.id, ...d.data() }))
+  .sort((a, b) => (a.referencia ?? 999999) - (b.referencia ?? 999999))
+
+    setItems(ordenadas)
+  }
+
+  fetch()
+}, [tipo])
 
   const resetForm = () => {
     setTitulo("")
@@ -44,6 +50,7 @@ export default function Admin() {
     setMetrosCuadrados("")
     setAsesor("")
     setWhatsapp("")
+    setReferencia("")
     setImagenes([])
     setPreview([])
     setEditando(null)
@@ -70,6 +77,7 @@ export default function Admin() {
       const urls = imagenes.length ? await subirImagenes() : []
 
       const data = {
+        referencia,
         titulo,
         precio: Number(precio),
         descripcion,
@@ -95,7 +103,12 @@ export default function Admin() {
       resetForm()
 
       const snap = await getDocs(collection(db, tipo))
-      setItems(snap.docs.map(d => ({ id: d.id, ...d.data() })))
+
+const ordenadas = snap.docs
+  .map(d => ({ id: d.id, ...d.data() }))
+  .sort((a, b) => (a.referencia ?? 999999) - (b.referencia ?? 999999))
+
+      setItems(ordenadas)
     } catch (err) {
       console.error(err)
       Swal.fire("Error", "Ocurrió un error, intenta más tarde o contacta a soporte", "error")
@@ -130,6 +143,7 @@ export default function Admin() {
 
   const handleEdit = item => {
     setEditando(item)
+    setReferencia(item.referencia || "")
     setTitulo(item.titulo)
     setPrecio(item.precio)
     setDescripcion(item.descripcion)
@@ -187,7 +201,13 @@ export default function Admin() {
           </button>
 
           <form onSubmit={crearPropiedad} className="card p-4 mb-5">
-
+            <input
+              className="form-control mb-2"
+              placeholder="N° de Referencia"
+              value={referencia}
+              onChange={e => setReferencia(Number(e.target.value))}
+              required
+            />
             <input className="form-control mb-2" placeholder="Título" value={titulo} onChange={e => setTitulo(e.target.value)} required />
             <input
               type="number"
@@ -234,6 +254,7 @@ export default function Admin() {
                 <div className="card h-100">
                   <img src={item.imagenes?.[0]} className="card-img-top" style={{ height: 180, objectFit: "cover" }} />
                   <div className="card-body d-flex flex-column">
+                    <h6 className="text-muted mb-0">Ref: {item.referencia}</h6>
                     <h5>{item.titulo}</h5>
                     <p className="text-rosa">{item.precio} USD</p>
                     <p>{item.descripcion?.slice(0, 100)}...</p>
