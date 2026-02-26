@@ -159,7 +159,7 @@ export default function PropiedadDetalle() {
       
       <div className="row justify-content-center">
 
-        <div className="col-6 col-md-12 text-center">
+        <div className="col-12 text-center">
           <p className=" h-100"> <strong>Asesor Designado:</strong> {propiedad.asesor}</p>
         </div>
         <div className="col-6 col-md-12">
@@ -171,7 +171,7 @@ export default function PropiedadDetalle() {
             >
               <i className="bi bi-whatsapp fs-5"></i> Enviar WhatsApp
             </button>
-
+            
             <button 
               className="rounded h-100 btn btn-outline-dark"
               onClick={compartirPropiedad}
