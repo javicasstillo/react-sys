@@ -20,6 +20,7 @@ export default function Admin() {
   const [referencia, setReferencia] = useState("")
   const [imagenes, setImagenes] = useState([])
   const [preview, setPreview] = useState([])
+  const [dragIndex, setDragIndex] = useState(null)
 
   const [loading, setLoading] = useState(false)
   const [editando, setEditando] = useState(null)
@@ -56,18 +57,28 @@ const ordenadas = snap.docs
     setEditando(null)
   }
 
-  const subirImagenes = async () => {
-    const urls = []
+const subirImagenes = async () => {
+  const urls = []
 
-    for (let img of imagenes) {
-      const imgRef = ref(storage, `propiedades/${tipo}/${Date.now()}-${img.name}`)
-      await uploadBytes(imgRef, img)
-      const url = await getDownloadURL(imgRef)
-      urls.push(url)
-    }
+  for (let i = 0; i < imagenes.length; i++) {
 
-    return urls
+    const img = imagenes[i]
+
+    if (!(img instanceof File)) continue
+
+    // 👇 ORDEN + TIMESTAMP
+    const imgRef = ref(
+      storage,
+      `propiedades/${tipo}/${Date.now()}-${i}-${img.name}`
+    )
+
+    await uploadBytes(imgRef, img)
+    const url = await getDownloadURL(imgRef)
+    urls.push(url)
   }
+
+  return urls
+}
 
   const crearPropiedad = async e => {
     e.preventDefault()
@@ -91,22 +102,33 @@ const ordenadas = snap.docs
       }
 
       if (editando) {
-        await updateDoc(doc(db, tipo, editando.id), {
-          ...data,
-          imagenes: urls.length ? urls : editando.imagenes
-        })
-      } else {
-        await addDoc(collection(db, tipo), data)
-      }
+
+  let imagenesFinales = editando.imagenes
+
+  // 👇 Si subió nuevas imágenes
+  if (urls.length) {
+    imagenesFinales = urls
+  }
+
+  // 👇 Si NO subió pero reordenó
+  else if (preview.length) {
+    imagenesFinales = preview
+  }
+
+  await updateDoc(doc(db, tipo, editando.id), {
+    ...data,
+    imagenes: imagenesFinales
+  })
+}
 
       Swal.fire("Éxito", "Propiedad cargada con éxito", "success")
       resetForm()
 
       const snap = await getDocs(collection(db, tipo))
 
-const ordenadas = snap.docs
-  .map(d => ({ id: d.id, ...d.data() }))
-  .sort((a, b) => (a.referencia ?? 999999) - (b.referencia ?? 999999))
+      const ordenadas = snap.docs
+        .map(d => ({ id: d.id, ...d.data() }))
+        .sort((a, b) => (a.referencia ?? 999999) - (b.referencia ?? 999999))
 
       setItems(ordenadas)
     } catch (err) {
@@ -157,11 +179,33 @@ const ordenadas = snap.docs
     setImagenes([])
   }
 
-  const handlePreview = files => {
-    setImagenes(files)
-    const prevs = Array.from(files).map(file => URL.createObjectURL(file))
+  const handlePreview = (files) => {
+    const arr = Array.from(files)
+    setImagenes(arr)
+    const prevs = arr.map(file => URL.createObjectURL(file))
     setPreview(prevs)
-  }
+}
+
+  const handleDragStart = (index) => {
+  setDragIndex(index)
+}
+
+const handleDrop = (index) => {
+  if (dragIndex === null) return
+
+  const newPreview = [...preview]
+  const newImagenes = [...imagenes]
+
+  const [movedPreview] = newPreview.splice(dragIndex, 1)
+  const [movedImagen] = newImagenes.splice(dragIndex, 1)
+
+  newPreview.splice(index, 0, movedPreview)
+  newImagenes.splice(index, 0, movedImagen)
+
+  setPreview(newPreview)
+  setImagenes(newImagenes)
+  setDragIndex(null)
+}
 
   return (
     <>
@@ -238,7 +282,25 @@ const ordenadas = snap.docs
 
             <div className="d-flex gap-2 flex-wrap mb-3">
               {preview.map((p, i) => (
-                <img key={i} src={p} style={{ width: 80, height: 80, objectFit: "cover", borderRadius: 6 }} />
+                <div
+                  key={i}
+                  draggable
+                  onDragStart={() => handleDragStart(i)}
+                  onDragOver={(e) => e.preventDefault()}
+                  onDrop={() => handleDrop(i)}
+                  style={{ cursor: "grab" }}
+                >
+                  <img
+                    src={p}
+                    style={{
+                      width: 80,
+                      height: 80,
+                      objectFit: "cover",
+                      borderRadius: 6,
+                      border: "2px solid #ccc"
+                    }}
+                  />
+                </div>
               ))}
             </div>
 
