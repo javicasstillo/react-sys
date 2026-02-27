@@ -179,24 +179,26 @@ const subirImagenes = async () => {
 }
 
 const handleEdit = item => {
-  setEditando(item)
-  setReferencia(item.referencia || "")
-  setTitulo(item.titulo)
-  setPrecio(item.precio)
-  setDescripcion(item.descripcion)
-  setUbicacion(item.ubicacion || "")
-  setBanos(item.banos)
-  setHabitaciones(item.habitaciones)
-  setMetrosCuadrados(item.metrosCuadrados)
-  setAsesor(item.asesor)
-  setWhatsapp(item.whatsapp)
 
-  // 👇 las viejas se cargan como URL
+  setEditando(item)
+
+  setReferencia(item.referencia ?? "")
+  setTitulo(item.titulo ?? "")
+  setPrecio(item.precio ?? "")
+  setDescripcion(item.descripcion ?? "")
+  setUbicacion(item.ubicacion ?? "")
+  setBanos(item.banos ?? "")
+  setHabitaciones(item.habitaciones ?? "")
+  setMetrosCuadrados(item.metrosCuadrados ?? "")
+  setAsesor(item.asesor ?? "")
+  setWhatsapp(item.whatsapp ?? "")
+
   setPreview(
-    (item.imagenes || []).map(url => ({
-      file: null,
-      url
-    }))
+    (item.imagenes || []).map(im =>
+      typeof im === "string"
+        ? { file: null, url: im }
+        : { file: null, url: im.url }
+    )
   )
 }
 
