@@ -86,63 +86,73 @@ const subirImagenes = async () => {
 }
 
   const crearPropiedad = async e => {
-    e.preventDefault()
-    try {
-      setLoading(true)
+  e.preventDefault()
 
-      const urls = imagenes.length ? await subirImagenes() : []
+  try {
 
-      const data = {
-        referencia,
-        titulo,
-        precio: Number(precio),
-        descripcion,
-        ubicacion,
-        banos,
-        habitaciones,
-        metrosCuadrados,
-        imagenes: urls,
-        asesor,
-        whatsapp
+    setLoading(true)
+
+    // 🔥 ahora usamos preview
+    const urls = preview.length ? await subirImagenes() : []
+
+    const data = {
+      referencia,
+      titulo,
+      precio: Number(precio),
+      descripcion,
+      ubicacion,
+      banos,
+      habitaciones,
+      metrosCuadrados,
+      imagenes: urls,
+      asesor,
+      whatsapp
+    }
+
+    if (editando) {
+
+      let imagenesFinales = editando.imagenes
+
+      if (urls.length) {
+        imagenesFinales = urls
+      }
+      else if (preview.length) {
+        imagenesFinales = preview.map(p => p.url)
       }
 
-      if (editando) {
+      await updateDoc(doc(db, tipo, editando.id), {
+        ...data,
+        imagenes: imagenesFinales
+      })
 
-  let imagenesFinales = editando.imagenes
+    } else {
 
-  // 👇 Si subió nuevas imágenes
-  if (urls.length) {
-    imagenesFinales = urls
-  }
+      // 🔥🔥🔥 ESTO FALTABA
+      await addDoc(collection(db, tipo), data)
 
-  // 👇 Si NO subió pero reordenó
-  else if (preview.length) {
-    imagenesFinales = preview
-  }
-
-  await updateDoc(doc(db, tipo, editando.id), {
-    ...data,
-    imagenes: imagenesFinales
-  })
-}
-
-      Swal.fire("Éxito", "Propiedad cargada con éxito", "success")
-      resetForm()
-
-      const snap = await getDocs(collection(db, tipo))
-
-      const ordenadas = snap.docs
-        .map(d => ({ id: d.id, ...d.data() }))
-        .sort((a, b) => (a.referencia ?? 999999) - (b.referencia ?? 999999))
-
-      setItems(ordenadas)
-    } catch (err) {
-      console.error(err)
-      Swal.fire("Error", "Ocurrió un error, intenta más tarde o contacta a soporte", "error")
-    } finally {
-      setLoading(false)
     }
+
+    Swal.fire("Éxito", "Propiedad cargada con éxito", "success")
+    resetForm()
+
+    const snap = await getDocs(collection(db, tipo))
+    const ordenadas = snap.docs
+      .map(d => ({ id: d.id, ...d.data() }))
+      .sort((a, b) => (a.referencia ?? 999999) - (b.referencia ?? 999999))
+
+    setItems(ordenadas)
+
+  } catch (err) {
+
+    console.error(err)
+    Swal.fire("Error", err.message, "error")
+
+  } finally {
+
+    setLoading(false)
+
   }
+}
 
   const eliminar = async (id) => {
   const result = await Swal.fire({
