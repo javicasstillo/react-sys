@@ -24,22 +24,32 @@ export default function Admin() {
 
   const [loading, setLoading] = useState(false)
   const [editando, setEditando] = useState(null)
+  const [comentarioInterno, setComentarioInterno] = useState("")
 
-useEffect(() => {
+  const verComentarioInterno = (comentario) => {
+  Swal.fire({
+    title: "Comentario interno",
+    text: comentario,
+    icon: "info",
+    confirmButtonText: "Cerrar"
+  })
+}
+
+  useEffect(() => {
   if (!tipo) return
 
   const fetch = async () => {
     const snap = await getDocs(collection(db, tipo))
 
-const ordenadas = snap.docs
-  .map(d => ({ id: d.id, ...d.data() }))
-  .sort((a, b) => (a.referencia ?? 999999) - (b.referencia ?? 999999))
+  const ordenadas = snap.docs
+    .map(d => ({ id: d.id, ...d.data() }))
+    .sort((a, b) => (a.referencia ?? 999999) - (b.referencia ?? 999999))
 
-    setItems(ordenadas)
-  }
+      setItems(ordenadas)
+    }
 
-  fetch()
-}, [tipo])
+    fetch()
+  }, [tipo])
 
   const resetForm = () => {
     setTitulo("")
@@ -55,9 +65,10 @@ const ordenadas = snap.docs
     setImagenes([])
     setPreview([])
     setEditando(null)
+    setComentarioInterno("")
   }
 
-const subirImagenes = async () => {
+  const subirImagenes = async () => {
 
   const imagenesFinales = []
 
@@ -106,7 +117,8 @@ const subirImagenes = async () => {
       metrosCuadrados,
       imagenes: urls,
       asesor,
-      whatsapp
+      whatsapp,
+      comentarioInterno
     }
 
     if (editando) {
@@ -192,6 +204,7 @@ const handleEdit = item => {
   setMetrosCuadrados(item.metrosCuadrados ?? "")
   setAsesor(item.asesor ?? "")
   setWhatsapp(item.whatsapp ?? "")
+  setComentarioInterno(item.comentarioInterno ?? "")
 
   setPreview(
     (item.imagenes || []).map(im =>
@@ -311,6 +324,14 @@ const handleDrop = (index) => {
 
             <input className="form-control mb-3" placeholder="WhatsApp" value={whatsapp} onChange={e => setWhatsapp(e.target.value)} required />
 
+            <textarea
+              className="form-control mb-2"
+              placeholder="Comentario interno"
+              rows={3}
+              value={comentarioInterno}
+              onChange={e => setComentarioInterno(e.target.value)}
+            />
+
             <input type="file" className="form-control mb-3" multiple accept="image/*" onChange={e => handlePreview(e.target.files)} />
 
             <div className="d-flex gap-2 flex-wrap mb-3">
@@ -374,7 +395,8 @@ const handleDrop = (index) => {
                     <p className="text-rosa">{item.precio} USD</p>
                     <p>{item.descripcion?.slice(0, 100)}...</p>
 
-                    <div className="mt-auto d-flex gap-2">
+                    <div className="mt-auto d-flex flex-wrap gap-2">
+
                       <button
                         className="btn btn-sm btn-outline-dark"
                         onClick={() => handleEdit(item)}
@@ -388,6 +410,16 @@ const handleDrop = (index) => {
                       >
                         Eliminar
                       </button>
+
+                      {item.comentarioInterno && (
+                        <button
+                          className="btn btn-sm btn-outline-secondary"
+                          onClick={() => verComentarioInterno(item.comentarioInterno)}
+                        >
+                          Ver comentario interno
+                        </button>
+                      )}
+
                     </div>
                   </div>
                 </div>
