@@ -317,7 +317,7 @@ const handleDrop = (index) => {
 
             <select className="form-select mb-2" value={asesor} onChange={e => setAsesor(e.target.value)} required>
               <option value="">Asesor Designado</option>
-              {["Carlos Sacon", "Fabricio Signes", "Alfredo Signes", "Rodolfo Andrade", "Nahuel Barroso", "Leonel Bernardeau", "Silvia Diaz"].map(a => (
+              {["Carlos Sacon", "Fabricio Signes", "Noelia Albert", "Rodolfo Andrade", "Nahuel Barroso", "Leonel Bernardeau", "Silvia Diaz"].map(a => (
                 <option key={a} value={a}>{a}</option>
               ))}
             </select>
