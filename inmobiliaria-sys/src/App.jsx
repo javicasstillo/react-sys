@@ -579,6 +579,38 @@ function Home() {
                     </div>
                   </div>
 
+                  <div className="col-6 col-lg-2" data-aos="fade-up">
+                    <div className="rounded py-3 h-100 bg-body-secondary d-flex flex-column">
+                      <div className="d-flex flex-column align-items-center justify-content-between gap-3 h-100">
+
+                        <div className="d-flex justify-content-center" style={{ height: 120 }}>
+                          <img
+                            src="/assets/Noelia.jpg"
+                            alt="Noelia Albert"
+                            className="w-100 h-100 rounded object-fit-cover"
+                            style={{ maxWidth: 120 }}
+                            loading="lazy"
+                          />
+                        </div>
+
+                        <div className="d-flex flex-column justify-content-center text-center">
+                          <h3 className="text-bebas mb-0">Noelia Albert</h3>
+                          <p className="mb-2">Asesora de ventas</p>
+                        </div>
+
+                        <a
+                          href="https://api.whatsapp.com/send?phone=2604628164&text=¡Hola Noelia👋! Estuve viendo su pagina web y necesito hacer la siguiente consulta: "
+                          className="link-underline-opacity-0 link-light mt-auto d-flex"
+                        >
+                          <button className="btn bg-rosa text-white w-100">
+                            <i className="bi bi-whatsapp"></i> Enviar Whatsapp
+                          </button>
+                        </a>
+
+                      </div>
+                    </div>
+                  </div>
+
                 </div>
               </div>
             </div>
