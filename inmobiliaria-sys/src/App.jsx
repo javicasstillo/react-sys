@@ -269,7 +269,7 @@ function Home() {
                         <p className="text-bebas text-white tamano2">
                           {item.nombre}
                         </p>
-                      </div>
+                      </div>    
                     </div>
                   </Link>
                 </div>
