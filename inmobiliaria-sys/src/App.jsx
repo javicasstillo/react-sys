@@ -183,7 +183,7 @@ function Home() {
                     <h3 className="text-white text-bebas text-center">Propiedades<br />Entregadas</h3>
                   </div>
                   <div className="p-2 p-md-3 bg-black rounded bg-opacity-50 flex-fill">
-                    <h1 className="mb-0 text-white text-bebas text-center">+60</h1>
+                    <h1 className="mb-0 text-white text-bebas text-center">+90</h1>
                     <h3 className="text-white text-bebas text-center">Propiedades<br />Disponibles</h3>
                   </div>
                 </div>
