@@ -36,35 +36,43 @@ export default function Admin() {
   })
 }
 
-  useEffect(() => {
+useEffect(() => {
   if (!tipo) return
 
   const fetch = async () => {
+
+    // 🔹 cargar propiedades del tipo seleccionado
     const snap = await getDocs(collection(db, tipo))
 
-    const docs = snap.docs
-
-    const ordenadas = docs
+    const ordenadas = snap.docs
       .map(d => ({ id: d.id, ...d.data() }))
       .sort((a, b) => (a.referencia ?? 999999) - (b.referencia ?? 999999))
 
     setItems(ordenadas)
 
-    // 🔥 calcular referencia automática
-    const nuevaReferencia = calcularReferencia(docs)
+    // 🔥 calcular referencia GLOBAL
+    const nuevaReferencia = await obtenerReferenciaGlobal()
     setReferencia(nuevaReferencia)
   }
 
   fetch()
 }, [tipo])
 
-  const calcularReferencia = (docs) => {
-  if (!docs.length) return 1
+  const colecciones = ["casas", "departamentos", "fincas", "lotes", "locales"]
 
-  const maxReferencia = docs.reduce((max, d) => {
-    const ref = d.data().referencia || 0
-    return ref > max ? ref : max
-  }, 0)
+const obtenerReferenciaGlobal = async () => {
+  let maxReferencia = 0
+
+  for (const col of colecciones) {
+    const snap = await getDocs(collection(db, col))
+
+    snap.docs.forEach(doc => {
+      const ref = doc.data().referencia || 0
+      if (ref > maxReferencia) {
+        maxReferencia = ref
+      }
+    })
+  }
 
   return maxReferencia + 1
 }
