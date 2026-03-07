@@ -54,16 +54,23 @@ export default function Casas() {
           <div key={c.id} className="col-md-4 mb-4">
             <div className="card h-100">
 
-              <div className="alturagpt skeleton">
-                <img
-                  src={c.imagenes?.[0]}
-                  loading="lazy"
-                  alt={c.titulo}
-                  className="card-img-top"
-                  style={{ height: 200, objectFit: "cover" }}
-                  onLoad={(e) => e.currentTarget.parentElement.classList.remove("skeleton")}
-                />
-              </div>
+              <Link
+                to={`/propiedad/casas/${c.id}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-decoration-none"
+              >
+                <div className="alturagpt skeleton">
+                  <img
+                    src={c.imagenes?.[0]}
+                    loading="lazy"
+                    alt={c.titulo}
+                    className="card-img-top"
+                    style={{ height: 200, objectFit: "cover", cursor: "pointer" }}
+                    onLoad={(e) => e.currentTarget.parentElement.classList.remove("skeleton")}
+                  />
+                </div>
+              </Link>
 
               <div className="card-body d-flex flex-column">
                 <h5 className="text-center">{c.titulo}</h5>

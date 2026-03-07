@@ -53,16 +53,23 @@ export default function Lotes() {
           {lotesPaginados.map(l => (
             <div key={l.id} className="col-md-4 mb-4">
               <div className="card h-100">
+                <Link
+                to={`/propiedad/lotes/${l.id}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-decoration-none"
+              >
                 <div className="alturagpt skeleton">
                   <img
                     src={l.imagenes?.[0]}
                     loading="lazy"
                     alt={l.titulo}
                     className="card-img-top"
-                    style={{ height: 200, objectFit: "cover" }}
+                    style={{ height: 200, objectFit: "cover", cursor: "pointer" }}
                     onLoad={(e) => e.currentTarget.parentElement.classList.remove("skeleton")}
                   />
-              </div>
+                </div>
+              </Link>
 
                 <div className="card-body d-flex flex-column">
                   <h5 className="text-center">{l.titulo}</h5>
