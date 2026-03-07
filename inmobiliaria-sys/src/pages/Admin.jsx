@@ -42,15 +42,32 @@ export default function Admin() {
   const fetch = async () => {
     const snap = await getDocs(collection(db, tipo))
 
-  const ordenadas = snap.docs
-    .map(d => ({ id: d.id, ...d.data() }))
-    .sort((a, b) => (a.referencia ?? 999999) - (b.referencia ?? 999999))
+    const docs = snap.docs
 
-      setItems(ordenadas)
-    }
+    const ordenadas = docs
+      .map(d => ({ id: d.id, ...d.data() }))
+      .sort((a, b) => (a.referencia ?? 999999) - (b.referencia ?? 999999))
 
-    fetch()
-  }, [tipo])
+    setItems(ordenadas)
+
+    // 🔥 calcular referencia automática
+    const nuevaReferencia = calcularReferencia(docs)
+    setReferencia(nuevaReferencia)
+  }
+
+  fetch()
+}, [tipo])
+
+  const calcularReferencia = (docs) => {
+  if (!docs.length) return 1
+
+  const maxReferencia = docs.reduce((max, d) => {
+    const ref = d.data().referencia || 0
+    return ref > max ? ref : max
+  }, 0)
+
+  return maxReferencia + 1
+}
 
   const resetForm = () => {
     setTitulo("")
@@ -299,8 +316,7 @@ const handleDrop = (index) => {
               className="form-control mb-2"
               placeholder="N° de Referencia"
               value={referencia}
-              onChange={e => setReferencia(Number(e.target.value))}
-              required
+              readOnly
             />
             <input className="form-control mb-2" placeholder="Título" value={titulo} onChange={e => setTitulo(e.target.value)} required />
             <input
