@@ -77,12 +77,12 @@ export default function PropiedadDetalle() {
     <header>
             <nav className="navbar  bg-rosa fixed-top">
               <div className="container d-flex justify-content-between">
-                <img src="/assets/logo.png" alt="logo" className="logo cursor" onClick={() => navigate(-1)}/>
+                <img src="/assets/logo.png" alt="logo" className="logo cursor" onClick={() => navigate("/")}/>
                 <button 
                   className="btn btn-outline-light bg-rosa text-white fs-5"
-                  onClick={() => navigate(-1)}
+                  onClick={() => navigate("/")}
                 >
-                  ← Volver
+                  ← Ir al Inicio
                 </button>
                   
               </div>
@@ -138,21 +138,28 @@ export default function PropiedadDetalle() {
       </div>
       <div className="row gy-3">
         <div className="col-6 col-md-4">
-          <p className="p-3   bg-body-secondary  text-center rounded h-100">{propiedad.banos} Baños </p>
-        </div>
-        <div className="col-6 col-md-4">
-          <p className="p-3   bg-body-secondary   text-center rounded h-100"> {propiedad.habitaciones} Habitaciones</p>
-        </div>
-        <div className="col-6 col-md-4">
           <p className="p-3   bg-body-secondary   text-center rounded h-100"> {propiedad.metrosCuadrados} M²</p>
         </div>
-        <div className="col-6 col-md-12">
+        <div className="col-6 col-md-4">
+          <p className="p-3   bg-body-secondary   text-center rounded h-100"> {propiedad.metrosCubiertos} M² cub</p>
+        </div>
+        <div className="col-6 col-md-4">
+          <p className="p-3   bg-body-secondary  text-center rounded h-100">{propiedad.banos} Baños </p>
+        </div>
+        
+        <div className="col-6 col-md-6">
+          <p className="p-3   bg-body-secondary   text-center rounded h-100"> {propiedad.habitaciones} Habitaciones</p>
+        </div>
+        
+        <div className="col-12 col-md-6">
           <p className="p-3   bg-body-secondary   text-center rounded h-100"> <i class="bi bi-geo-alt-fill text-dark fs-5"></i> {propiedad.ubicacion}</p>
         </div>
         
       </div>
       {/* DESCRIPCIÓN */}
-      <p className="py-3">{propiedad.descripcion}</p>
+      <p className="py-3" style={{ whiteSpace: "pre-line" }}>
+        {propiedad.descripcion}
+      </p>
 
       {/* DATOS IGUAL QUE EL MODAL */}
       
@@ -192,7 +199,7 @@ export default function PropiedadDetalle() {
     <footer className="bg-rosa">
         <div className="container py-3">
           <div className="row justify-content-between">
-            <article className="col-12 col-md-6 text-center" onClick={() => navigate(-1)}>
+            <article className="col-12 col-md-6 text-center" onClick={() => navigate("/")}>
               <button className="bg-transparent border-0">
                 <img src="/assets/logo.png" alt="logo footer" className="w-50 logo" />
               </button>

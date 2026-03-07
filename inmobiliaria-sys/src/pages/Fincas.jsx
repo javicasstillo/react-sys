@@ -76,6 +76,7 @@ export default function Fincas() {
                         <p className="mb-0">{f.metrosCuadrados} M²</p>
                       </div>
                     </div>
+                    
                     <div className="col-12">
                       <div className="rounded bg-body-secondary text-center p-3">
                         <p className="mb-0">{f.habitaciones} Habitaciones</p>
@@ -95,7 +96,12 @@ export default function Fincas() {
                     {f.descripcion?.length > 100 && "..."}
                   </p>
 
-                  <Link to={`/propiedad/fincas/${f.id}`} className="btn bg-dark text-white mb-2 mt-auto">
+                  <Link 
+                    to={`/propiedad/fincas/${f.id}`} 
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="btn bg-dark text-white mb-2 mt-auto"
+                  >
                     Ver propiedad
                   </Link>
                 </div>

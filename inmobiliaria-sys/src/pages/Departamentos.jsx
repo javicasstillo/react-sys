@@ -73,6 +73,7 @@ export default function Departamentos() {
                         <p className="mb-0">{d.metrosCuadrados} M²</p>
                       </div>
                     </div>
+                    
                     <div className="col-12">
                       <div className="rounded bg-body-secondary text-center p-3">
                         <p className="mb-0">{d.habitaciones} Habitaciones</p>
@@ -92,7 +93,12 @@ export default function Departamentos() {
                     {d.descripcion?.length > 100 && "..."}
                   </p>
 
-                  <Link to={`/propiedad/departamentos/${d.id}`} className="btn bg-dark text-white mb-2 mt-auto">
+                  <Link 
+                    to={`/propiedad/departamentos/${d.id}`} 
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="btn bg-dark text-white mb-2 mt-auto"
+                  >
                     Ver propiedad
                   </Link>
                 </div>

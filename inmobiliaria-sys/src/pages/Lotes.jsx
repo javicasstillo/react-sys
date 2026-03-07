@@ -88,7 +88,12 @@ export default function Lotes() {
                     {l.descripcion?.length > 100 && "..."}
                   </p>
 
-                  <Link to={`/propiedad/lotes/${l.id}`} className="btn bg-dark text-white mb-2 mt-auto">
+                  <Link 
+                    to={`/propiedad/lotes/${l.id}`} 
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="btn bg-dark text-white mb-2 mt-auto"
+                  >
                     Ver propiedad
                   </Link>
                 </div>

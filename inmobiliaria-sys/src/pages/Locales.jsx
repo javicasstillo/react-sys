@@ -85,7 +85,12 @@ export default function Locales() {
                     {l.descripcion?.length > 100 && "..."}
                   </p>
 
-                  <Link to={`/propiedad/locales/${l.id}`} className="btn bg-dark text-white mb-2 mt-auto" >
+                  <Link 
+                    to={`/propiedad/locales/${l.id}`} 
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="btn bg-dark text-white mb-2 mt-auto"
+                  >
                     Ver propiedad
                   </Link>
                 </div>

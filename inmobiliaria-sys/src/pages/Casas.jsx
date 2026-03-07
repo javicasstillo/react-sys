@@ -75,16 +75,27 @@ export default function Casas() {
                       <p className="mb-0"> {c.banos} Baños</p>
                     </div>
                   </div>
-                  <div className="col-6">
-                    <div className="rounded bg-body-secondary   text-center p-3">
-                      <p className="mb-0"> {c.metrosCuadrados} M²</p>
-                    </div>
-                  </div>
-                  <div className="col-12"> 
+                  <div className="col-6"> 
                     <div className="rounded bg-body-secondary   text-center p-3">
                       <p className="mb-0"> {c.habitaciones} Habitaciones</p>
                     </div>
                   </div>
+                  <div className="col-6">
+                    <div className="rounded bg-body-secondary text-center p-3">
+                      <p className="mb-0">
+                        {c.metrosCuadrados} M²
+                      </p>
+                    </div>
+                  </div>
+                  
+                  <div className="col-6">
+                    <div className="rounded bg-body-secondary text-center p-3">
+                      <p className="mb-0">
+                        {c.metrosCubiertos ?? ""} M² Cub
+                      </p>
+                    </div>
+                  </div>
+                  
 
                   <div className="d-flex flex-column gap-3">
                     <div className="text-center p-3">
@@ -99,7 +110,12 @@ export default function Casas() {
                   {c.descripcion?.length > 100 && "..."}
                 </p>
 
-                <Link to={`/propiedad/casas/${c.id}`} className="btn bg-dark text-white mb-2 mt-auto">
+                <Link 
+                  to={`/propiedad/casas/${c.id}`} 
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="btn bg-dark text-white mb-2 mt-auto"
+                >
                   Ver propiedad
                 </Link>
 

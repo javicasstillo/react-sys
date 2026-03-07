@@ -15,6 +15,7 @@ export default function Admin() {
   const [banos, setBanos] = useState("")
   const [habitaciones, setHabitaciones] = useState("")
   const [metrosCuadrados, setMetrosCuadrados] = useState("")
+  const [metrosCubiertos, setMetrosCubiertos] = useState("")
   const [asesor, setAsesor] = useState("")
   const [whatsapp, setWhatsapp] = useState("")
   const [referencia, setReferencia] = useState("")
@@ -59,6 +60,7 @@ export default function Admin() {
     setBanos("")
     setHabitaciones("")
     setMetrosCuadrados("")
+    setMetrosCubiertos("")
     setAsesor("")
     setWhatsapp("")
     setReferencia("")
@@ -115,6 +117,7 @@ export default function Admin() {
       banos,
       habitaciones,
       metrosCuadrados,
+      metrosCubiertos,
       imagenes: urls,
       asesor,
       whatsapp,
@@ -202,6 +205,7 @@ const handleEdit = item => {
   setBanos(item.banos ?? "")
   setHabitaciones(item.habitaciones ?? "")
   setMetrosCuadrados(item.metrosCuadrados ?? "")
+  setMetrosCubiertos(item.metrosCubiertos ?? "")
   setAsesor(item.asesor ?? "")
   setWhatsapp(item.whatsapp ?? "")
   setComentarioInterno(item.comentarioInterno ?? "")
@@ -314,6 +318,12 @@ const handleDrop = (index) => {
             <input className="form-control mb-2" placeholder="Baños" value={banos} onChange={e => setBanos(e.target.value)} />
             <input className="form-control mb-2" placeholder="Habitaciones" value={habitaciones} onChange={e => setHabitaciones(e.target.value)} />
             <input className="form-control mb-2" placeholder="Metros cuadrados" value={metrosCuadrados} onChange={e => setMetrosCuadrados(e.target.value)} />
+            <input
+              className="form-control mb-2"
+              placeholder="Metros cubiertos"
+              value={metrosCubiertos}
+              onChange={e => setMetrosCubiertos(e.target.value)}
+            />
 
             <select className="form-select mb-2" value={asesor} onChange={e => setAsesor(e.target.value)} required>
               <option value="">Asesor Designado</option>
