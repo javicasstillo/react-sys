@@ -3,6 +3,7 @@ import { useParams, Link, useNavigate } from "react-router-dom";
 import { doc, getDoc } from "firebase/firestore";
 import { db } from "../firebase";
 import Swal from "sweetalert2"
+import jsPDF from "jspdf"
 
 export default function PropiedadDetalle() {
   const { tipo, id } = useParams();
@@ -67,6 +68,72 @@ export default function PropiedadDetalle() {
       Swal.fire("Error", "No se pudo copiar el link", "error")
     }
   }
+}
+
+const generarPDF = async () => {
+
+  const pdf = new jsPDF()
+
+  pdf.setFontSize(18)
+  pdf.text(propiedad.titulo, 10, 15)
+
+  pdf.setFontSize(14)
+  pdf.text(`Precio: ${propiedad.precio} USD`, 10, 25)
+
+  let y = 35
+
+  const imagenes = propiedad.imagenes?.slice(0,5) || []
+
+  for (const imgUrl of imagenes) {
+
+    const base64 = await cargarImagenBase64(imgUrl)
+
+    pdf.addImage(base64, "JPEG", 10, y, 180, 90)
+
+    y += 100
+
+    if (y > 250) {
+      pdf.addPage()
+      y = 20
+    }
+  }
+
+  pdf.addPage()
+
+  pdf.setFontSize(16)
+  pdf.text("Descripción", 10, 20)
+
+  pdf.setFontSize(12)
+
+  const texto = pdf.splitTextToSize(propiedad.descripcion, 180)
+
+  pdf.text(texto, 10, 30)
+
+  pdf.save(`propiedad-${propiedad.referencia}.pdf`)
+}
+
+const cargarImagenBase64 = (url) => {
+  return new Promise((resolve) => {
+
+    const img = new Image()
+    img.crossOrigin = "anonymous"
+
+    img.onload = () => {
+
+      const canvas = document.createElement("canvas")
+      canvas.width = img.width
+      canvas.height = img.height
+
+      const ctx = canvas.getContext("2d")
+      ctx.drawImage(img, 0, 0)
+
+      const dataURL = canvas.toDataURL("image/jpeg")
+
+      resolve(dataURL)
+    }
+
+    img.src = url
+  })
 }
 
   
@@ -184,6 +251,13 @@ export default function PropiedadDetalle() {
               onClick={compartirPropiedad}
             >
               <i className="bi bi-share-fill fs-5"></i> Compartir
+            </button>
+
+            <button 
+              className="rounded h-100 btn btn-outline-danger"
+              onClick={generarPDF}
+            >
+              <i className="bi bi-file-earmark-pdf-fill fs-5"></i> Generar PDF
             </button>
 
           </div>
