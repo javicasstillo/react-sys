@@ -280,11 +280,11 @@ const cargarLogoBase64 = (url) => {
       {/* CARROUSEL EXACTO AL MODAL */}
       {/* CARROUSEL CON ALTURA FIJA Y ESTILOS EN CSS */}
       <div
-          id="carouselPropiedad"
-          className="carousel slide mb-4 carousel-propiedad"
-          data-bs-touch="false"
-          data-bs-interval="false"
-        >
+        id="carouselPropiedad"
+        className="carousel slide mb-4 carousel-propiedad"
+        data-bs-touch="true"
+        data-bs-interval="false"
+      >
         <div className="carousel-inner">
 
           {propiedad.imagenes?.map((img, i) => (
