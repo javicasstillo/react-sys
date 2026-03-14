@@ -4,11 +4,20 @@ import { doc, getDoc } from "firebase/firestore";
 import { db } from "../firebase";
 import Swal from "sweetalert2"
 import jsPDF from "jspdf"
+import ZoomPlugin from "yet-another-react-lightbox/plugins/zoom"
+import "yet-another-react-lightbox/styles.css"
+
+import Lightbox from "yet-another-react-lightbox"
+import "yet-another-react-lightbox/styles.css"
 
 export default function PropiedadDetalle() {
   const { tipo, id } = useParams();
   const [propiedad, setPropiedad] = useState(null);
   const navigate = useNavigate()
+  const [imagenActual, setImagenActual] = useState(0)
+  
+  const [abrirGaleria, setAbrirGaleria] = useState(false)
+  const [indexImagen, setIndexImagen] = useState(0)
 
   useEffect(() => {
     const fetch = async () => {
@@ -23,6 +32,35 @@ export default function PropiedadDetalle() {
     };
     fetch();
   }, [tipo, id]);
+
+  useEffect(() => {
+
+    if (!propiedad) return
+
+    const carousel = document.getElementById("carouselPropiedad")
+
+    if (!carousel) return
+
+    const actualizarContador = () => {
+
+      const slides = carousel.querySelectorAll(".carousel-item")
+      const activo = carousel.querySelector(".carousel-item.active")
+
+      const index = Array.from(slides).indexOf(activo)
+
+      if (index >= 0) {
+        setImagenActual(index)
+      }
+
+    }
+
+    carousel.addEventListener("slid.bs.carousel", actualizarContador)
+
+    return () => {
+      carousel.removeEventListener("slid.bs.carousel", actualizarContador)
+    }
+
+  }, [propiedad])
 
   if (!propiedad) return <p className="text-center py-5">Cargando propiedad...</p>;
 
@@ -74,40 +112,96 @@ const generarPDF = async () => {
 
   const pdf = new jsPDF()
 
+  // LOGO
+
+
+
+// 🔹 franja de color del header
+pdf.setFillColor(0, 0, 0) // 
+pdf.rect(0, 0, 210, 35, "F")
+
+// 🔹 logo
+const logo = await cargarLogoBase64("/assets/logo.png")
+pdf.addImage(logo, "PNG", 75, 7, 60, 20)
+
+  // TITULO
   pdf.setFontSize(18)
-  pdf.text(propiedad.titulo, 10, 15)
+  pdf.text(propiedad.titulo, 10, 40)
 
+  // PRECIO
   pdf.setFontSize(14)
-  pdf.text(`Precio: ${propiedad.precio} USD`, 10, 25)
+  pdf.text(`Precio: ${propiedad.precio} USD`, 10, 50)
 
-  let y = 35
+  // REFERENCIA
+  pdf.text(`Referencia: ${propiedad.referencia}`, 10, 58)
 
-  const imagenes = propiedad.imagenes?.slice(0,5) || []
+  const imagenes = propiedad.imagenes?.slice(0,4) || []
 
-  for (const imgUrl of imagenes) {
+let x = 10
+let y = 70
 
-    const base64 = await cargarImagenBase64(imgUrl)
+const ancho = 90
+const alto = 65
 
-    pdf.addImage(base64, "JPEG", 10, y, 180, 90)
+for (let i = 0; i < imagenes.length; i++) {
 
-    y += 100
+  const base64 = await cargarImagenBase64(imagenes[i])
 
-    if (y > 250) {
-      pdf.addPage()
-      y = 20
-    }
+  pdf.addImage(base64, "JPEG", x, y, ancho, alto)
+
+  if (i % 2 === 0) {
+    x = 110
+  } else {
+    x = 10
+    y += 75
   }
+}
 
+  // DATOS
   pdf.addPage()
 
   pdf.setFontSize(16)
-  pdf.text("Descripción", 10, 20)
+  pdf.text("Características", 10, 20)
+
+  pdf.setFontSize(12)
+
+  pdf.text(`Metros totales: ${propiedad.metrosCuadrados} m²`, 10, 35)
+  pdf.text(`Metros cubiertos: ${propiedad.metrosCubiertos || "-"} m²`, 10, 45)
+  pdf.text(`Habitaciones: ${propiedad.habitaciones}`, 10, 55)
+  pdf.text(`Baños: ${propiedad.banos}`, 10, 65)
+  pdf.text(`Ubicación: ${propiedad.ubicacion}`, 10, 75)
+
+  // DESCRIPCIÓN
+  pdf.setFontSize(16)
+  pdf.text("Descripción", 10, 95)
 
   pdf.setFontSize(12)
 
   const texto = pdf.splitTextToSize(propiedad.descripcion, 180)
 
-  pdf.text(texto, 10, 30)
+pdf.text(texto, 10, 105)
+
+// calcular altura real del texto
+const textDimensions = pdf.getTextDimensions(texto)
+let finalDescripcion = 105 + textDimensions.h
+
+// si el contacto se pasa del límite de la hoja → nueva página
+if (finalDescripcion > 240) {
+  pdf.addPage()
+  finalDescripcion = 20
+}
+
+// línea separadora
+pdf.line(10, finalDescripcion + 5, 200, finalDescripcion + 5)
+
+// CONTACTO
+pdf.setFontSize(14)
+pdf.text("Contacto", 10, finalDescripcion + 15)
+
+pdf.setFontSize(12)
+pdf.text("Inmobiliaria SyS", 10, finalDescripcion + 25)
+pdf.text("Las Heras 181 - San Rafael", 10, finalDescripcion + 32)
+pdf.text("Tel: +54 9 260 4345281", 10, finalDescripcion + 39)
 
   pdf.save(`propiedad-${propiedad.referencia}.pdf`)
 }
@@ -130,6 +224,26 @@ const cargarImagenBase64 = (url) => {
       const dataURL = canvas.toDataURL("image/jpeg")
 
       resolve(dataURL)
+    }
+
+    img.src = url
+  })
+}
+
+const cargarLogoBase64 = (url) => {
+  return new Promise((resolve) => {
+    const img = new Image()
+    img.crossOrigin = "anonymous"
+
+    img.onload = () => {
+      const canvas = document.createElement("canvas")
+      canvas.width = img.width
+      canvas.height = img.height
+
+      const ctx = canvas.getContext("2d")
+      ctx.drawImage(img, 0, 0)
+
+      resolve(canvas.toDataURL("image/png"))
     }
 
     img.src = url
@@ -165,7 +279,12 @@ const cargarImagenBase64 = (url) => {
 
       {/* CARROUSEL EXACTO AL MODAL */}
       {/* CARROUSEL CON ALTURA FIJA Y ESTILOS EN CSS */}
-      <div id="carouselPropiedad" className="carousel slide mb-4 carousel-propiedad">
+      <div
+          id="carouselPropiedad"
+          className="carousel slide mb-4 carousel-propiedad"
+          data-bs-touch="false"
+          data-bs-interval="false"
+        >
         <div className="carousel-inner">
 
           {propiedad.imagenes?.map((img, i) => (
@@ -178,6 +297,11 @@ const cargarImagenBase64 = (url) => {
                   src={img}
                   alt={`Propiedad ${i + 1}`}
                   className="carousel-propiedad-img"
+                  style={{ cursor: "zoom-in" }}
+                  onClick={() => {
+                    setIndexImagen(i)
+                    setAbrirGaleria(true)
+                  }}
                 />
               </div>
             </div>
@@ -202,6 +326,21 @@ const cargarImagenBase64 = (url) => {
         >
           <span className="carousel-control-next-icon carousel-propiedad-arrow"></span>
         </button>
+      </div>
+     <Lightbox
+  open={abrirGaleria}
+  close={() => setAbrirGaleria(false)}
+  index={indexImagen}
+  slides={propiedad.imagenes.map(img => ({ src: img }))}
+  plugins={[ZoomPlugin]}
+  zoom={{
+    maxZoomPixelRatio: 3,
+    zoomInMultiplier: 2,
+    doubleTapDelay: 300,
+  }}
+/>
+      <div className="text-center mb-3 text-muted">
+        {imagenActual + 1} / {propiedad.imagenes?.length}
       </div>
       <div className="row gy-3">
         <div className="col-6 col-md-4">
